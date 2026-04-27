@@ -67,10 +67,13 @@ Deno.serve(async () => {
     const planName = inv.plans?.name || 'Investment'
 
     // Credit ROI to balance and update total_earnings
+    // Return capital + ROI to balance
+    const returnAmount = roi + inv.amount
+
     const { error: updateError } = await supabase
       .from('profiles')
       .update({
-        balance: (profile.balance || 0) + roi,
+        balance: (profile.balance || 0) + returnAmount,
         total_earnings: (profile.total_earnings || 0) + roi
       })
       .eq('id', inv.user_id)
@@ -96,7 +99,7 @@ Deno.serve(async () => {
 
     // Send email notification
     if (profile?.email) {
-      await sendEmail(profile.email, profile.full_name, roi, planName)
+      await sendEmail(profile.email, profile.full_name, returnAmount, planName)
     }
 
     console.log(`Credited $${roi} to user ${inv.user_id} for ${planName} plan`)
