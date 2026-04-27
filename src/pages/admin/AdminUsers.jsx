@@ -3,6 +3,7 @@ import { supabase } from '../../lib/supabase'
 import Navbar from '../../components/Navbar'
 import toast, { Toaster } from 'react-hot-toast'
 import { Gift } from 'lucide-react'
+import { sendEmail, emailTemplates } from '../../lib/email'
 
 export default function AdminUsers() {
   const [users, setUsers] = useState([])
@@ -29,7 +30,6 @@ export default function AdminUsers() {
 
     setCrediting(user.id)
 
-    // Credit balance and update total_earnings
     const { error } = await supabase
       .from('profiles')
       .update({
@@ -44,12 +44,23 @@ export default function AdminUsers() {
       return
     }
 
-    // Log it as an earning transaction
     await supabase.from('transactions').insert({
       user_id: user.id,
       type: 'earning',
       amount,
       status: 'confirmed'
+    })
+
+    // Send email
+    const template = emailTemplates.earningCredited({
+      name: user.full_name,
+      amount,
+      planName: null
+    })
+    await sendEmail({
+      to_email: user.email,
+      to_name: user.full_name,
+      ...template
     })
 
     toast.success(`$${amount} credited to ${user.full_name}`)

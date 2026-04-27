@@ -1,5 +1,20 @@
+import { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { supabase } from '../lib/supabase'
 import { Link } from 'react-router-dom'
+
 export default function Home() {
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    // Check if user just confirmed their email
+    supabase.auth.onAuthStateChange((event) => {
+      if (event === 'SIGNED_IN') {
+        navigate('/dashboard')
+      }
+    })
+  }, [])
+
   return (
     <div style={{ minHeight: '100vh', background: '#0a0f1e', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
       <h1 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>💰 CryptoVest</h1>

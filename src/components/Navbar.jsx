@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { LayoutDashboard, TrendingUp, ArrowDownCircle, ArrowUpCircle, History, LogOut } from 'lucide-react'
+import { LayoutDashboard, TrendingUp, ArrowDownCircle, ArrowUpCircle, History, LogOut, Shield } from 'lucide-react'
 
 export default function Navbar() {
   const { profile, signOut } = useAuth()
@@ -20,7 +20,9 @@ export default function Navbar() {
         <Link to="/deposit" style={styles.link}><ArrowDownCircle size={16} /> Deposit</Link>
         <Link to="/withdraw" style={styles.link}><ArrowUpCircle size={16} /> Withdraw</Link>
         <Link to="/history" style={styles.link}><History size={16} /> History</Link>
+        <Link to="/kyc" style={styles.link}><Shield size={16} /> KYC</Link>
         {profile?.is_admin && <Link to="/admin" style={{ ...styles.link, color: '#f59e0b' }}>Admin</Link>}
+        {profile?.is_admin && <Link to="/admin/kyc" style={{ ...styles.link, color: '#f59e0b' }}>KYC Review</Link>}
       </div>
       <div style={styles.right}>
         <span style={styles.name}>{profile?.full_name}</span>

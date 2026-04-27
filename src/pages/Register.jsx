@@ -21,8 +21,8 @@ export default function Register() {
     if (error) {
       toast.error(error.message)
     } else {
-      toast.success('Account created! Please check your email to confirm.')
-      setTimeout(() => navigate('/login'), 2000)
+      toast.success('Account created! Check your email to confirm before logging in.')
+      setTimeout(() => navigate('/login'), 3000)
     }
     setLoading(false)
   }

@@ -3,6 +3,7 @@ import { supabase } from '../../lib/supabase'
 import Navbar from '../../components/Navbar'
 import toast, { Toaster } from 'react-hot-toast'
 import { CheckCircle, XCircle, Clock } from 'lucide-react'
+import { sendEmail, emailTemplates } from '../../lib/email'
 
 export default function AdminWithdrawals() {
   const [withdrawals, setWithdrawals] = useState([])
@@ -39,6 +40,19 @@ export default function AdminWithdrawals() {
     if (error) {
       toast.error('Failed to approve')
     } else {
+      // Send email
+      const template = emailTemplates.withdrawalApproved({
+        name: tx.profiles?.full_name,
+        amount: tx.amount,
+        currency: tx.crypto_currency,
+        wallet: tx.crypto_address
+      })
+      await sendEmail({
+        to_email: tx.profiles?.email,
+        to_name: tx.profiles?.full_name,
+        ...template
+      })
+
       toast.success(`Approved $${tx.amount} withdrawal`)
       fetchWithdrawals()
     }
@@ -52,6 +66,17 @@ export default function AdminWithdrawals() {
     if (error) {
       toast.error('Failed to reject')
     } else {
+      // Send email
+      const template = emailTemplates.withdrawalRejected({
+        name: tx.profiles?.full_name,
+        amount: tx.amount
+      })
+      await sendEmail({
+        to_email: tx.profiles?.email,
+        to_name: tx.profiles?.full_name,
+        ...template
+      })
+
       toast.success(`Rejected and refunded $${tx.amount}`)
       fetchWithdrawals()
     }
