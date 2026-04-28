@@ -24,8 +24,8 @@ export default function Navbar() {
     { to: '/plans', icon: <TrendingUp size={15} />, label: 'Plans' },
     { to: '/deposit', icon: <ArrowDownCircle size={15} />, label: 'Deposit' },
     { to: '/withdraw', icon: <ArrowUpCircle size={15} />, label: 'Withdraw' },
-    // { to: '/history', icon: <History size={15} />, label: 'History' },
-    // { to: '/kyc', icon: <Shield size={15} />, label: 'KYC' },
+    { to: '/history', icon: <History size={15} />, label: 'History' },
+    { to: '/kyc', icon: <Shield size={15} />, label: 'KYC' },
     // { to: '/admin/kyc', icon: <Settings size={15} />, label: 'Admin KYC', adminOnly: true },
   ]
 
@@ -201,7 +201,7 @@ export default function Navbar() {
             {profile?.is_admin && (
               <Link to="/admin/kyc" className="nv-item"
                 style={{ display: 'flex', alignItems: 'center', gap: '.38rem', padding: '0 .85rem', height: '62px', textDecoration: 'none', fontSize: '.8rem', fontWeight: '600', color: '#f59e0b', background: active('/admin/kyc') ? '#f59e0b11' : 'transparent', borderBottom: `2px solid ${active('/admin/kyc') ? '#f59e0b' : 'transparent'}`, transition: 'all .2s' }}>
-                <Settings size={15} /> Admin KYC
+                <Shield size={15} /> Admin KYC
               </Link>
             )}
             {profile?.is_admin && (
