@@ -106,7 +106,7 @@ export default function Withdraw() {
       <Navbar />
       <div style={styles.container}>
 
-        <div style={styles.topRow}>
+        <div className="dashboard-row" style={styles.topRow}>
 
           {/* Withdrawal Form */}
           <div style={styles.card}>
@@ -233,7 +233,13 @@ export default function Withdraw() {
             </div>
           )}
         </div>
-
+<style>{`
+@media (max-width: 590px) {
+  .dashboard-row {
+    grid-template-columns: 1fr !important;
+  }
+}
+`}</style>
       </div>
     </div>
   )

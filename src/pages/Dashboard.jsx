@@ -79,7 +79,7 @@ export default function Dashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div style={styles.actions}>
+        <div className="button-flat" style={styles.actions}>
           <Link to="/deposit" style={{ ...styles.actionBtn, background: '#00ff8822', color: '#00ff88', border: '1px solid #00ff8844' }}>
             <ArrowDownCircle size={18} /> Deposit
           </Link>
@@ -91,7 +91,7 @@ export default function Dashboard() {
           </Link>
         </div>
 
-        <div style={styles.row}>
+        <div className="dashboard-row" style={styles.row}>
           {/* Active Investments */}
           <div style={styles.section}>
             <h3 style={styles.sectionTitle}>Active Investments</h3>
@@ -153,7 +153,20 @@ export default function Dashboard() {
             )}
           </div>
         </div>
-
+<style>{`
+@media (max-width: 590px) {
+  .dashboard-row {
+    grid-template-columns: 1fr !important;
+  }
+}
+`}</style>
+<style>{`
+@media (max-width: 450px) {
+  .button-flat {
+    flex-direction: column !important;
+  }
+}
+`}</style>
       </div>
     </div>
   )
@@ -168,7 +181,7 @@ const styles = {
   cardLabel: { color: '#6b7280', margin: 0, fontSize: '0.85rem' },
   cardValue: { margin: '0.2rem 0 0', fontWeight: 'bold', fontSize: '1.3rem' },
   actions: { display: 'flex', gap: '1rem', marginBottom: '2rem', flexWrap: 'wrap' },
-  actionBtn: { display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.7rem 1.5rem', borderRadius: '8px', textDecoration: 'none', fontWeight: '600', fontSize: '0.9rem' },
+  actionBtn: { display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '1rem 1.5rem', borderRadius: '8px', textDecoration: 'none', fontWeight: '600', fontSize: '0.9rem' },
   row: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' },
   section: { background: '#111827', borderRadius: '12px', padding: '1.5rem', border: '1px solid #1f2937' },
   sectionTitle: { color: '#fff', margin: '0 0 1rem', fontSize: '1rem' },
