@@ -98,9 +98,9 @@ export default function Home() {
   ]
 
   const testimonials = [
-    { name: 'Marcus O.', location: 'Lagos, NG', text: 'Returns have been consistent every single cycle. The bot genuinely works.', roi: '+18%' },
+    { name: 'Peter O.', location: 'New York, USA', text: 'Returns have been consistent every single cycle. The bot genuinely works.', roi: '+18%' },
     { name: 'Priya K.', location: 'London, UK', text: 'Set it and forget it. Earnings were credited exactly on time.', roi: '+10%' },
-    { name: 'David M.', location: 'Accra, GH', text: 'Smooth platform, responsive support. Already on my third cycle.', roi: '+35%' },
+    { name: 'David M.', location: 'Texas, USA', text: 'Smooth platform, responsive support. Already on my third cycle.', roi: '+35%' },
   ]
 
   const G = 'linear-gradient(90deg,#00d4ff,#00ff88)'
@@ -138,6 +138,22 @@ export default function Home() {
         @keyframes rot{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
         .ai{border:none;outline:none}
         .ai:focus{border-color:#00d4ff66!important;outline:none}
+
+        /* Hamburger animated bars */
+        .hb-bar{display:block;width:20px;height:2px;background:#94a3b8;border-radius:2px;
+          transition:transform .3s cubic-bezier(.16,1,.3,1),opacity .2s,width .3s;transform-origin:center}
+        .hb-open .hb-bar:nth-child(1){transform:translateY(6px) rotate(45deg)}
+        .hb-open .hb-bar:nth-child(2){opacity:0;width:0}
+        .hb-open .hb-bar:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+
+        /* Mobile menu slide */
+        @keyframes mobSlideDown{from{opacity:0;max-height:0}to{opacity:1;max-height:500px}}
+        @keyframes mobSlideUp{from{opacity:1;max-height:500px}to{opacity:0;max-height:0}}
+        .mob-open{animation:mobSlideDown .28s cubic-bezier(.16,1,.3,1) both}
+        .mob-closed{animation:mobSlideUp .2s cubic-bezier(.4,0,1,1) both;pointer-events:none}
+
+        /* Mobile nav item fade in */
+        @keyframes hmFadeIn{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}
 
         /* RESPONSIVE */
         @media(max-width:960px){
@@ -194,28 +210,38 @@ export default function Home() {
               style={{ background: 'linear-gradient(135deg,#00d4ff22,#00ff8822)', border: '1px solid #00d4ff44', color: '#00d4ff', padding: '.44rem 1rem', borderRadius: '8px', textDecoration: 'none', fontSize: '.84rem', fontFamily: 'DM Sans', fontWeight: '500' }}>
               Get Started
             </a>
-            <button className="hmb" onClick={() => setMobileNavOpen(o => !o)}
-              style={{ display: 'none', background: 'none', border: 'none', cursor: 'pointer', flexDirection: 'column', gap: '4px', padding: '4px' }}>
-              {mobileNavOpen
-                ? <span style={{ color: '#94a3b8', fontSize: '1.2rem', lineHeight: 1 }}>✕</span>
-                : [0, 1, 2].map(i => <div key={i} style={{ width: '20px', height: '2px', background: '#94a3b8', borderRadius: '2px' }} />)}
+            <button className={`hmb${mobileNavOpen ? ' hb-open' : ''}`} onClick={() => setMobileNavOpen(o => !o)}
+              style={{ display: 'none', background: 'none', border: 'none', cursor: 'pointer', flexDirection: 'column', gap: '4px', padding: '4px', borderRadius: '6px' }}
+              aria-label="Toggle menu">
+              <span className="hb-bar" />
+              <span className="hb-bar" />
+              <span className="hb-bar" />
             </button>
           </div>
         </div>
-        {mobileNavOpen && (
-          <div style={{ background: '#020c1b', borderTop: '1px solid #0f2040', padding: '1rem 1.5rem', display: 'flex', flexDirection: 'column', gap: '.2rem' }}>
-            {[['#how-it-works', 'How It Works'], ['#plans', 'Plans'], ['#about', 'About'], ['#testimonials', 'Reviews']].map(([h, l]) => (
+        <div className={`home-mob-menu ${mobileNavOpen ? 'mob-open' : 'mob-closed'}`}
+          style={{ background: '#020c1b', borderTop: '1px solid #0f2040', overflow: 'hidden' }}>
+          <div style={{ padding: '.8rem 1.5rem 1rem', display: 'flex', flexDirection: 'column', gap: '.1rem' }}>
+            {[['#how-it-works', 'How It Works'], ['#plans', 'Plans'], ['#about', 'About'], ['#testimonials', 'Reviews']].map(([h, l], idx) => (
               <a key={h} href={h} onClick={() => setMobileNavOpen(false)}
-                style={{ color: '#94a3b8', textDecoration: 'none', padding: '.75rem 0', fontFamily: 'DM Sans', fontSize: '.92rem', borderBottom: '1px solid #0f2040' }}>{l}</a>
+                style={{ color: '#94a3b8', textDecoration: 'none', padding: '.72rem .8rem', fontFamily: 'DM Sans', fontSize: '.92rem', borderRadius: '8px', borderBottom: '1px solid #0f2040', transition: 'color .2s, background .2s', animation: mobileNavOpen ? `hmFadeIn .25s ${idx * 0.05}s both` : 'none' }}
+                onMouseEnter={e => { e.target.style.color = '#00d4ff'; e.target.style.background = 'rgba(0,212,255,0.06)' }}
+                onMouseLeave={e => { e.target.style.color = '#94a3b8'; e.target.style.background = 'transparent' }}>
+                {l}
+              </a>
             ))}
             <div style={{ display: 'flex', gap: '.8rem', marginTop: '.8rem' }}>
               <a href="#auth" onClick={() => { setActiveTab('login'); setMobileNavOpen(false) }}
-                style={{ flex: 1, textAlign: 'center', padding: '.7rem', border: '1px solid #1e3a5f', borderRadius: '8px', color: '#94a3b8', textDecoration: 'none', fontFamily: 'DM Sans', fontSize: '.88rem' }}>Login</a>
+                style={{ flex: 1, textAlign: 'center', padding: '.7rem', border: '1px solid #1e3a5f', borderRadius: '8px', color: '#94a3b8', textDecoration: 'none', fontFamily: 'DM Sans', fontSize: '.88rem', transition: 'border-color .2s, color .2s' }}>
+                Login
+              </a>
               <a href="#auth" onClick={() => { setActiveTab('register'); setMobileNavOpen(false) }}
-                style={{ flex: 1, textAlign: 'center', padding: '.7rem', background: 'linear-gradient(135deg,#00d4ff,#00ff88)', borderRadius: '8px', color: '#020817', textDecoration: 'none', fontFamily: 'DM Sans', fontWeight: '700', fontSize: '.88rem' }}>Register</a>
+                style={{ flex: 1, textAlign: 'center', padding: '.7rem', background: 'linear-gradient(135deg,#00d4ff,#00ff88)', borderRadius: '8px', color: '#020817', textDecoration: 'none', fontFamily: 'DM Sans', fontWeight: '700', fontSize: '.88rem' }}>
+                Register
+              </a>
             </div>
           </div>
-        )}
+        </div>
       </nav>
 
       {/* TICKER */}
