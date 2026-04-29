@@ -178,7 +178,7 @@ export default function Register() {
               {/* Full Name */}
               <div>
                 <label style={labelStyle}>Full Name</label>
-                <input className="ri" style={inputStyle} placeholder="e.g. John Adewale Smith"
+                <input className="ri" style={inputStyle} placeholder="e.g. John Smith"
                   value={form.full_name} onChange={e => set('full_name', e.target.value)} />
               </div>
 
