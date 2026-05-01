@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabase'
 
@@ -63,23 +63,36 @@ export default function Home() {
     return () => { cancelAnimationFrame(animId); window.removeEventListener('resize', resize) }
   }, [])
 
+  const [forgotMode, setForgotMode] = useState(false)
+  const [forgotSent, setForgotSent] = useState(false)
+
   const handleAuth = async () => {
     setLoading(true); setMsg({ text: '', type: '' })
     if (activeTab === 'register') {
-      if (!form.name || !form.email || !form.password) {
-        setMsg({ text: 'All fields required', type: 'error' }); setLoading(false); return
-      }
-      const { error } = await supabase.auth.signUp({
-        email: form.email, password: form.password,
-        options: { data: { full_name: form.name } }
-      })
-      if (error) setMsg({ text: error.message, type: 'error' })
-      else setMsg({ text: 'Account created! Check your email to confirm.', type: 'success' })
-    } else {
-      const { error } = await supabase.auth.signInWithPassword({ email: form.email, password: form.password })
-      if (error) setMsg({ text: error.message, type: 'error' })
-      else navigate('/dashboard')
+      // Collect only name + email, then redirect to full Register page
+      if (!form.name.trim()) { setMsg({ text: 'Enter your full name', type: 'error' }); setLoading(false); return }
+      if (!form.email.trim()) { setMsg({ text: 'Enter your email address', type: 'error' }); setLoading(false); return }
+      const params = new URLSearchParams({ name: form.name, email: form.email })
+      navigate(`/register?${params.toString()}`)
+      setLoading(false)
+      return
     }
+    // Login
+    if (!form.email || !form.password) { setMsg({ text: 'Fill in all fields', type: 'error' }); setLoading(false); return }
+    const { error } = await supabase.auth.signInWithPassword({ email: form.email, password: form.password })
+    if (error) setMsg({ text: error.message, type: 'error' })
+    else navigate('/dashboard')
+    setLoading(false)
+  }
+
+  const handleForgot = async () => {
+    if (!form.email.trim()) { setMsg({ text: 'Enter your email address', type: 'error' }); return }
+    setLoading(true)
+    const { error } = await supabase.auth.resetPasswordForEmail(form.email, {
+      redirectTo: `${window.location.origin}/reset-password`
+    })
+    if (error) setMsg({ text: error.message, type: 'error' })
+    else setForgotSent(true)
     setLoading(false)
   }
 
@@ -98,7 +111,7 @@ export default function Home() {
   ]
 
   const testimonials = [
-    { name: 'Peter O.', location: 'New York, USA', text: 'Returns have been consistent every single cycle. The bot genuinely works.', roi: '+18%' },
+    { name: 'Peter O.', location: 'New york, USA', text: 'Returns have been consistent every single cycle. The AI bot genuinely works.', roi: '+18%' },
     { name: 'Priya K.', location: 'London, UK', text: 'Set it and forget it. Earnings were credited exactly on time.', roi: '+10%' },
     { name: 'David M.', location: 'Texas, USA', text: 'Smooth platform, responsive support. Already on my third cycle.', roi: '+35%' },
   ]
@@ -138,22 +151,6 @@ export default function Home() {
         @keyframes rot{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
         .ai{border:none;outline:none}
         .ai:focus{border-color:#00d4ff66!important;outline:none}
-
-        /* Hamburger animated bars */
-        .hb-bar{display:block;width:20px;height:2px;background:#94a3b8;border-radius:2px;
-          transition:transform .3s cubic-bezier(.16,1,.3,1),opacity .2s,width .3s;transform-origin:center}
-        .hb-open .hb-bar:nth-child(1){transform:translateY(6px) rotate(45deg)}
-        .hb-open .hb-bar:nth-child(2){opacity:0;width:0}
-        .hb-open .hb-bar:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
-
-        /* Mobile menu slide */
-        @keyframes mobSlideDown{from{opacity:0;max-height:0}to{opacity:1;max-height:500px}}
-        @keyframes mobSlideUp{from{opacity:1;max-height:500px}to{opacity:0;max-height:0}}
-        .mob-open{animation:mobSlideDown .28s cubic-bezier(.16,1,.3,1) both}
-        .mob-closed{animation:mobSlideUp .2s cubic-bezier(.4,0,1,1) both;pointer-events:none}
-
-        /* Mobile nav item fade in */
-        @keyframes hmFadeIn{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}
 
         /* RESPONSIVE */
         @media(max-width:960px){
@@ -210,38 +207,28 @@ export default function Home() {
               style={{ background: 'linear-gradient(135deg,#00d4ff22,#00ff8822)', border: '1px solid #00d4ff44', color: '#00d4ff', padding: '.44rem 1rem', borderRadius: '8px', textDecoration: 'none', fontSize: '.84rem', fontFamily: 'DM Sans', fontWeight: '500' }}>
               Get Started
             </a>
-            <button className={`hmb${mobileNavOpen ? ' hb-open' : ''}`} onClick={() => setMobileNavOpen(o => !o)}
-              style={{ display: 'none', background: 'none', border: 'none', cursor: 'pointer', flexDirection: 'column', gap: '4px', padding: '4px', borderRadius: '6px' }}
-              aria-label="Toggle menu">
-              <span className="hb-bar" />
-              <span className="hb-bar" />
-              <span className="hb-bar" />
+            <button className="hmb" onClick={() => setMobileNavOpen(o => !o)}
+              style={{ display: 'none', background: 'none', border: 'none', cursor: 'pointer', flexDirection: 'column', gap: '4px', padding: '4px' }}>
+              {mobileNavOpen
+                ? <span style={{ color: '#94a3b8', fontSize: '1.2rem', lineHeight: 1 }}>✕</span>
+                : [0, 1, 2].map(i => <div key={i} style={{ width: '20px', height: '2px', background: '#94a3b8', borderRadius: '2px' }} />)}
             </button>
           </div>
         </div>
-        <div className={`home-mob-menu ${mobileNavOpen ? 'mob-open' : 'mob-closed'}`}
-          style={{ background: '#020c1b', borderTop: '1px solid #0f2040', overflow: 'hidden' }}>
-          <div style={{ padding: '.8rem 1.5rem 1rem', display: 'flex', flexDirection: 'column', gap: '.1rem' }}>
-            {[['#how-it-works', 'How It Works'], ['#plans', 'Plans'], ['#about', 'About'], ['#testimonials', 'Reviews']].map(([h, l], idx) => (
+        {mobileNavOpen && (
+          <div style={{ background: '#020c1b', borderTop: '1px solid #0f2040', padding: '1rem 1.5rem', display: 'flex', flexDirection: 'column', gap: '.2rem' }}>
+            {[['#how-it-works', 'How It Works'], ['#plans', 'Plans'], ['#about', 'About'], ['#testimonials', 'Reviews']].map(([h, l]) => (
               <a key={h} href={h} onClick={() => setMobileNavOpen(false)}
-                style={{ color: '#94a3b8', textDecoration: 'none', padding: '.72rem .8rem', fontFamily: 'DM Sans', fontSize: '.92rem', borderRadius: '8px', borderBottom: '1px solid #0f2040', transition: 'color .2s, background .2s', animation: mobileNavOpen ? `hmFadeIn .25s ${idx * 0.05}s both` : 'none' }}
-                onMouseEnter={e => { e.target.style.color = '#00d4ff'; e.target.style.background = 'rgba(0,212,255,0.06)' }}
-                onMouseLeave={e => { e.target.style.color = '#94a3b8'; e.target.style.background = 'transparent' }}>
-                {l}
-              </a>
+                style={{ color: '#94a3b8', textDecoration: 'none', padding: '.75rem 0', fontFamily: 'DM Sans', fontSize: '.92rem', borderBottom: '1px solid #0f2040' }}>{l}</a>
             ))}
             <div style={{ display: 'flex', gap: '.8rem', marginTop: '.8rem' }}>
               <a href="#auth" onClick={() => { setActiveTab('login'); setMobileNavOpen(false) }}
-                style={{ flex: 1, textAlign: 'center', padding: '.7rem', border: '1px solid #1e3a5f', borderRadius: '8px', color: '#94a3b8', textDecoration: 'none', fontFamily: 'DM Sans', fontSize: '.88rem', transition: 'border-color .2s, color .2s' }}>
-                Login
-              </a>
+                style={{ flex: 1, textAlign: 'center', padding: '.7rem', border: '1px solid #1e3a5f', borderRadius: '8px', color: '#94a3b8', textDecoration: 'none', fontFamily: 'DM Sans', fontSize: '.88rem' }}>Login</a>
               <a href="#auth" onClick={() => { setActiveTab('register'); setMobileNavOpen(false) }}
-                style={{ flex: 1, textAlign: 'center', padding: '.7rem', background: 'linear-gradient(135deg,#00d4ff,#00ff88)', borderRadius: '8px', color: '#020817', textDecoration: 'none', fontFamily: 'DM Sans', fontWeight: '700', fontSize: '.88rem' }}>
-                Register
-              </a>
+                style={{ flex: 1, textAlign: 'center', padding: '.7rem', background: 'linear-gradient(135deg,#00d4ff,#00ff88)', borderRadius: '8px', color: '#020817', textDecoration: 'none', fontFamily: 'DM Sans', fontWeight: '700', fontSize: '.88rem' }}>Register</a>
             </div>
           </div>
-        </div>
+        )}
       </nav>
 
       {/* TICKER */}
@@ -516,20 +503,73 @@ export default function Home() {
               )}
               <input className="ai" style={{ width: '100%', padding: '.82rem 1rem', background: '#020c1b', border: '1px solid #0f2a4a', borderRadius: '8px', color: '#f1f5f9', fontFamily: 'DM Sans', fontSize: '.88rem' }}
                 type="email" placeholder="Email Address" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
-              <input className="ai" style={{ width: '100%', padding: '.82rem 1rem', background: '#020c1b', border: '1px solid #0f2a4a', borderRadius: '8px', color: '#f1f5f9', fontFamily: 'DM Sans', fontSize: '.88rem' }}
-                type="password" placeholder="Password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} />
+
+              {/* Login: password + forgot. Register: no password needed here */}
+              {activeTab === 'login' && !forgotMode && (
+                <>
+                  <input className="ai" style={{ width: '100%', padding: '.82rem 1rem', background: '#020c1b', border: '1px solid #0f2a4a', borderRadius: '8px', color: '#f1f5f9', fontFamily: 'DM Sans', fontSize: '.88rem' }}
+                    type="password" placeholder="Password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })}
+                    onKeyDown={e => e.key === 'Enter' && handleAuth()} />
+                  <div style={{ textAlign: 'right', marginTop: '-.3rem' }}>
+                    <span onClick={() => { setForgotMode(true); setMsg({ text: '', type: '' }) }}
+                      style={{ color: '#00d4ff', fontFamily: 'DM Sans', fontSize: '.78rem', cursor: 'pointer' }}>
+                      Forgot password?
+                    </span>
+                  </div>
+                </>
+              )}
+
+              {/* Forgot password mode */}
+              {activeTab === 'login' && forgotMode && !forgotSent && (
+                <div style={{ background: '#020c1b', border: '1px solid #0f2a4a', borderRadius: '8px', padding: '1rem' }}>
+                  <p style={{ color: '#475569', fontFamily: 'DM Sans', fontSize: '.82rem', margin: '0 0 .7rem' }}>Enter your email and we'll send a reset link.</p>
+                  <button onClick={handleForgot} disabled={loading}
+                    style={{ width: '100%', padding: '.75rem', background: 'linear-gradient(135deg,#00d4ff,#00ff88)', color: '#020817', border: 'none', borderRadius: '8px', fontFamily: 'Syne', fontWeight: '700', fontSize: '.88rem', cursor: 'pointer', opacity: loading ? .7 : 1 }}>
+                    {loading ? 'Sending...' : 'Send Reset Link'}
+                  </button>
+                  <button onClick={() => { setForgotMode(false); setMsg({ text: '', type: '' }) }}
+                    style={{ width: '100%', marginTop: '.5rem', padding: '.6rem', background: 'transparent', border: 'none', color: '#475569', fontFamily: 'DM Sans', fontSize: '.8rem', cursor: 'pointer' }}>
+                    ← Back to login
+                  </button>
+                </div>
+              )}
+
+              {activeTab === 'login' && forgotMode && forgotSent && (
+                <div style={{ background: '#00ff8808', border: '1px solid #00ff8833', borderRadius: '8px', padding: '1rem', textAlign: 'center' }}>
+                  <p style={{ color: '#00ff88', fontFamily: 'DM Sans', fontSize: '.85rem', margin: '0 0 .5rem', fontWeight: '600' }}>📬 Check your inbox</p>
+                  <p style={{ color: '#475569', fontFamily: 'DM Sans', fontSize: '.8rem', margin: 0 }}>Reset link sent to <strong style={{ color: '#f1f5f9' }}>{form.email}</strong></p>
+                  <button onClick={() => { setForgotMode(false); setForgotSent(false); setMsg({ text: '', type: '' }) }}
+                    style={{ marginTop: '.7rem', background: 'transparent', border: 'none', color: '#00d4ff', fontFamily: 'DM Sans', fontSize: '.8rem', cursor: 'pointer' }}>
+                    Back to login
+                  </button>
+                </div>
+              )}
+
+              {/* Register hint */}
+              {activeTab === 'register' && (
+                <div style={{ background: '#020c1b', border: '1px solid #0f2a4a', borderRadius: '8px', padding: '.75rem 1rem' }}>
+                  <p style={{ color: '#334155', fontFamily: 'DM Sans', fontSize: '.78rem', margin: 0 }}>
+                    ✦ You'll complete your full profile on the next page — date of birth, country, phone and more.
+                  </p>
+                </div>
+              )}
+
               {msg.text && (
                 <div style={{ padding: '.72rem 1rem', borderRadius: '8px', border: '1px solid', background: msg.type === 'error' ? '#ef444422' : '#00ff8822', borderColor: msg.type === 'error' ? '#ef444444' : '#00ff8844', color: msg.type === 'error' ? '#ef4444' : '#00ff88', fontFamily: 'DM Sans', fontSize: '.83rem' }}>
                   {msg.text}
                 </div>
               )}
-              <button onClick={handleAuth} disabled={loading} className="gb"
-                style={{ width: '100%', padding: '.88rem', background: 'linear-gradient(135deg,#00d4ff,#00ff88)', color: '#020817', border: 'none', borderRadius: '10px', fontFamily: 'Syne', fontWeight: '700', fontSize: '.93rem', cursor: 'pointer', opacity: loading ? .7 : 1 }}>
-                {loading ? 'Please wait...' : activeTab === 'login' ? 'Login to Dashboard' : 'Create Free Account'}
-              </button>
+
+              {!(activeTab === 'login' && forgotMode) && (
+                <button onClick={handleAuth} disabled={loading} className="gb"
+                  style={{ width: '100%', padding: '.88rem', background: 'linear-gradient(135deg,#00d4ff,#00ff88)', color: '#020817', border: 'none', borderRadius: '10px', fontFamily: 'Syne', fontWeight: '700', fontSize: '.93rem', cursor: 'pointer', opacity: loading ? .7 : 1 }}>
+                  {loading ? 'Please wait...' : activeTab === 'login' ? 'Login to Dashboard' : 'Continue to Register →'}
+                </button>
+              )}
+
               <p style={{ textAlign: 'center', color: '#475569', fontFamily: 'DM Sans', fontSize: '.83rem', margin: 0 }}>
                 {activeTab === 'login' ? "Don't have an account? " : 'Already have an account? '}
-                <span onClick={() => { setActiveTab(activeTab === 'login' ? 'register' : 'login'); setMsg({ text: '', type: '' }) }}
+                <span onClick={() => { setActiveTab(activeTab === 'login' ? 'register' : 'login'); setMsg({ text: '', type: '' }); setForgotMode(false); setForgotSent(false) }}
                   style={{ color: '#00d4ff', cursor: 'pointer' }}>
                   {activeTab === 'login' ? 'Register' : 'Login'}
                 </span>
