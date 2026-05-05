@@ -16,12 +16,12 @@ async function sendEmail(to_email: string, to_name: string, amount: number, plan
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      sender: { name: 'CryptoVest', email: SENDER_EMAIL },
+      sender: { name: 'SentientTrade', email: SENDER_EMAIL },
       to: [{ email: to_email, name: to_name }],
-      subject: '🎉 Your Investment Has Matured — CryptoVest',
+      subject: '🎉 Your Investment Has Matured — SentientTrade',
       htmlContent: `
         <div style="font-family: Arial, sans-serif; background: #0a0f1e; padding: 40px; max-width: 600px; margin: 0 auto; border-radius: 16px;">
-          <h1 style="color: #00ff88; text-align: center;">💰 CryptoVest</h1>
+          <h1 style="color: #00ff88; text-align: center;">💰 SentientTrade</h1>
           <div style="background: #111827; padding: 30px; border-radius: 12px;">
             <h2 style="color: #f59e0b;">🎉 Your investment matured!</h2>
             <p style="color: #9ca3af;">Hi ${to_name},</p>
@@ -32,7 +32,7 @@ async function sendEmail(to_email: string, to_name: string, amount: number, plan
             </div>
             <p style="color: #9ca3af;">Your balance has been updated. You can withdraw or reinvest.</p>
           </div>
-          <p style="color: #374151; text-align: center; font-size: 12px; margin-top: 20px;">© 2025 CryptoVest.</p>
+          <p style="color: #374151; text-align: center; font-size: 12px; margin-top: 20px;">© 2026 SentientTrade.</p>
         </div>
       `
     })
@@ -67,16 +67,13 @@ Deno.serve(async () => {
     const planName = inv.plans?.name || 'Investment'
 
     // Credit ROI to balance and update total_earnings
-    // Return capital + ROI to balance
-    const returnAmount = roi + inv.amount
-
     const { error: updateError } = await supabase
-      .from('profiles')
-      .update({
-        balance: (profile.balance || 0) + returnAmount,
-        total_earnings: (profile.total_earnings || 0) + roi
-      })
-      .eq('id', inv.user_id)
+    .from('profiles')
+    .update({
+      balance: (profile.balance || 0) + roi,
+      total_earnings: (profile.total_earnings || 0) + roi
+    })
+    .eq('id', inv.user_id)
 
     if (updateError) {
       console.error(`Failed to credit ROI for investment ${inv.id}:`, updateError)
@@ -99,7 +96,7 @@ Deno.serve(async () => {
 
     // Send email notification
     if (profile?.email) {
-      await sendEmail(profile.email, profile.full_name, returnAmount, planName)
+      await sendEmail(profile.email, profile.full_name, roi, planName)
     }
 
     console.log(`Credited $${roi} to user ${inv.user_id} for ${planName} plan`)

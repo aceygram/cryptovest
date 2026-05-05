@@ -2,124 +2,107 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
 import { Link } from 'react-router-dom'
 import Navbar from '../../components/Navbar'
+import { useTheme, tokens } from '../../context/ThemeContext'
 import { Users, DollarSign, ArrowUpCircle, TrendingUp } from 'lucide-react'
 
 export default function AdminDashboard() {
-  const [stats, setStats] = useState({
-    totalUsers: 0,
-    totalDeposits: 0,
-    pendingWithdrawals: 0,
-    activeInvestments: 0,
-    totalWithdrawn: 0
-  })
+  const { theme } = useTheme()
+  const t = tokens(theme)
+  const [stats, setStats] = useState({ totalUsers:0, totalDeposits:0, pendingWithdrawals:0, activeInvestments:0, totalWithdrawn:0 })
   const [recentUsers, setRecentUsers] = useState([])
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    fetchStats()
-  }, [])
+  useEffect(() => { fetchStats() }, [])
 
   const fetchStats = async () => {
     const [
-      { count: totalUsers },
-      { data: deposits },
-      { data: pendingW },
-      { count: activeInv },
-      { data: confirmedW },
-      { data: users }
+      { count:totalUsers },
+      { data:deposits },
+      { data:pendingW },
+      { count:activeInv },
+      { data:confirmedW },
+      { data:users }
     ] = await Promise.all([
-      supabase.from('profiles').select('*', { count: 'exact', head: true }),
-      supabase.from('transactions').select('amount').eq('type', 'deposit').eq('status', 'confirmed'),
-      supabase.from('transactions').select('*').eq('type', 'withdrawal').eq('status', 'pending'),
-      supabase.from('investments').select('*', { count: 'exact', head: true }).eq('status', 'active'),
-      supabase.from('transactions').select('amount').eq('type', 'withdrawal').eq('status', 'confirmed'),
-      supabase.from('profiles').select('*').order('created_at', { ascending: false }).limit(5)
+      supabase.from('profiles').select('*',{count:'exact',head:true}),
+      supabase.from('transactions').select('amount').eq('type','deposit').eq('status','confirmed'),
+      supabase.from('transactions').select('*').eq('type','withdrawal').eq('status','pending'),
+      supabase.from('investments').select('*',{count:'exact',head:true}).eq('status','active'),
+      supabase.from('transactions').select('amount').eq('type','withdrawal').eq('status','confirmed'),
+      supabase.from('profiles').select('*').order('created_at',{ascending:false}).limit(5)
     ])
-
-    const totalDeposits = deposits?.reduce((sum, d) => sum + d.amount, 0) || 0
-    const totalWithdrawn = confirmedW?.reduce((sum, w) => sum + w.amount, 0) || 0
-
     setStats({
-      totalUsers: totalUsers || 0,
-      totalDeposits,
-      pendingWithdrawals: pendingW?.length || 0,
-      activeInvestments: activeInv || 0,
-      totalWithdrawn
+      totalUsers:totalUsers||0,
+      totalDeposits:deposits?.reduce((s,d)=>s+d.amount,0)||0,
+      pendingWithdrawals:pendingW?.length||0,
+      activeInvestments:activeInv||0,
+      totalWithdrawn:confirmedW?.reduce((s,w)=>s+w.amount,0)||0
     })
-    setRecentUsers(users || [])
+    setRecentUsers(users||[])
     setLoading(false)
   }
 
   const statCards = [
-    { label: 'Total Users', value: stats.totalUsers, icon: <Users size={22} />, color: '#3b82f6' },
-    { label: 'Total Deposits', value: `$${stats.totalDeposits.toFixed(2)}`, icon: <DollarSign size={22} />, color: '#00ff88' },
-    { label: 'Pending Withdrawals', value: stats.pendingWithdrawals, icon: <ArrowUpCircle size={22} />, color: '#ef4444', link: '/admin/withdrawals' },
-    { label: 'Active Investments', value: stats.activeInvestments, icon: <TrendingUp size={22} />, color: '#f59e0b' },
-    { label: 'Total Withdrawn', value: `$${stats.totalWithdrawn.toFixed(2)}`, icon: <ArrowUpCircle size={22} />, color: '#8b5cf6' },
+    { label:'Total Users',         value:stats.totalUsers,                        icon:<Users size={20}/>,       color:t.blue },
+    { label:'Total Deposits',      value:`$${stats.totalDeposits.toFixed(2)}`,     icon:<DollarSign size={20}/>,  color:t.green },
+    { label:'Pending Withdrawals', value:stats.pendingWithdrawals,                 icon:<ArrowUpCircle size={20}/>,color:t.red, link:'/admin/withdrawals' },
+    { label:'Active Investments',  value:stats.activeInvestments,                  icon:<TrendingUp size={20}/>,  color:t.yellow },
+    { label:'Total Withdrawn',     value:`$${stats.totalWithdrawn.toFixed(2)}`,    icon:<ArrowUpCircle size={20}/>,color:t.purple||'#8b5cf6' },
   ]
 
-  if (loading) return (
-    <div style={{ background: '#0a0f1e', minHeight: '100vh' }}>
-      <Navbar />
-      <div style={{ color: '#fff', textAlign: 'center', marginTop: '20%' }}>Loading...</div>
-    </div>
-  )
+  if (loading) return <div style={{ background:t.bg,minHeight:'100vh' }}><Navbar/><div style={{ color:t.textSub,textAlign:'center',marginTop:'20%',fontFamily:'DM Sans' }}>Loading...</div></div>
 
   return (
-    <div style={{ background: '#0a0f1e', minHeight: '100vh' }}>
-      <Navbar />
-      <div style={styles.container}>
-        <div style={styles.header}>
-          <h2 style={{ color: '#fff', margin: 0 }}>Admin Dashboard</h2>
-          <p style={{ color: '#6b7280', margin: '0.3rem 0 0' }}>Platform overview</p>
-        </div>
+    <div style={{ background:t.bg, minHeight:'100vh', fontFamily:"'Syne',sans-serif" }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
+        *{box-sizing:border-box}
+        @media(max-width:600px){
+          .adm-stat-grid{grid-template-columns:1fr 1fr!important}
+          .adm-quick{flex-direction:column!important}
+          .adm-user-row{flex-wrap:wrap!important;gap:.6rem!important}
+          .adm-user-right{width:100%!important;text-align:left!important}
+        }
+        @media(max-width:380px){.adm-stat-grid{grid-template-columns:1fr!important}}
+      `}</style>
+      <Navbar/>
+      <div style={{ maxWidth:'1100px', margin:'0 auto', padding:'2rem 1.5rem' }}>
+        <h2 style={{ color:t.text, margin:'0 0 .3rem', fontSize:'1.4rem', fontWeight:'800', letterSpacing:'-.02em' }}>Admin Dashboard</h2>
+        <p style={{ color:t.textSub, margin:'0 0 2rem', fontFamily:'DM Sans', fontSize:'.88rem' }}>Platform overview</p>
 
-        {/* Stat Cards */}
-        <div style={styles.grid}>
-          {statCards.map((card, i) => (
-            <div key={i} style={{ ...styles.card, ...(card.link ? { cursor: 'pointer' } : {}) }}
-              onClick={() => card.link && (window.location.href = card.link)}>
-              <div style={{ ...styles.iconBox, background: card.color + '22', color: card.color }}>
-                {card.icon}
+        <div className="adm-stat-grid" style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(180px,1fr))', gap:'1rem', marginBottom:'1.5rem' }}>
+          {statCards.map((card,i)=>(
+            <div key={i} style={{ background:t.card,borderRadius:'12px',padding:'1.2rem',display:'flex',alignItems:'center',gap:'1rem',border:`1px solid ${t.cardBorder}`,cursor:card.link?'pointer':'default' }}
+              onClick={()=>card.link&&(window.location.href=card.link)}>
+              <div style={{ padding:'.65rem',borderRadius:'10px',background:card.color+'22',color:card.color,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0 }}>{card.icon}</div>
+              <div style={{ minWidth:0 }}>
+                <p style={{ color:t.textSub,margin:0,fontSize:'.78rem',fontFamily:'DM Sans' }}>{card.label}</p>
+                <p style={{ color:card.color,margin:'.15rem 0 0',fontWeight:'800',fontSize:'1.2rem',letterSpacing:'-.02em' }}>{card.value}</p>
               </div>
-              <div>
-                <p style={styles.cardLabel}>{card.label}</p>
-                <p style={{ ...styles.cardValue, color: card.color }}>{card.value}</p>
-              </div>
-              {card.link && card.value > 0 && (
-                <span style={{ marginLeft: 'auto', background: '#ef444422', color: '#ef4444', padding: '0.2rem 0.6rem', borderRadius: '99px', fontSize: '0.75rem' }}>
-                  Action needed
-                </span>
-              )}
+              {card.link&&card.value>0&&<span style={{ marginLeft:'auto',background:t.red+'22',color:t.red,padding:'.2rem .55rem',borderRadius:'99px',fontSize:'.7rem',fontFamily:'DM Sans',fontWeight:'600',flexShrink:0 }}>!</span>}
             </div>
           ))}
         </div>
 
-        {/* Quick Links */}
-        <div style={styles.quickLinks}>
-          <Link to="/admin/withdrawals" style={{ ...styles.quickBtn, background: '#ef444422', color: '#ef4444', border: '1px solid #ef444444' }}>
-            Manage Withdrawals
-          </Link>
-          <Link to="/admin/users" style={{ ...styles.quickBtn, background: '#3b82f622', color: '#3b82f6', border: '1px solid #3b82f644' }}>
-            Manage Users
-          </Link>
+        <div className="adm-quick" style={{ display:'flex', gap:'1rem', marginBottom:'2rem', flexWrap:'wrap' }}>
+          {[{to:'/admin/withdrawals',label:'Manage Withdrawals',color:t.red},{to:'/admin/users',label:'Manage Users',color:t.blue},{to:'/admin/kyc',label:'KYC Review',color:t.yellow}].map(btn=>(
+            <Link key={btn.to} to={btn.to} style={{ padding:'.7rem 1.4rem',borderRadius:'8px',textDecoration:'none',fontWeight:'600',fontSize:'.88rem',fontFamily:'DM Sans',background:btn.color+'18',color:btn.color,border:`1px solid ${btn.color}33` }}>{btn.label}</Link>
+          ))}
         </div>
 
-        {/* Recent Users */}
-        <div style={styles.section}>
-          <h3 style={{ color: '#fff', margin: '0 0 1rem' }}>Recent Registrations</h3>
-          {recentUsers.map(u => (
-            <div key={u.id} style={styles.userRow}>
-              <div style={styles.avatar}>{u.full_name?.charAt(0).toUpperCase()}</div>
-              <div style={{ flex: 1 }}>
-                <p style={{ color: '#fff', margin: 0, fontWeight: '600' }}>{u.full_name}</p>
-                <p style={{ color: '#6b7280', margin: '0.1rem 0 0', fontSize: '0.82rem' }}>{u.email}</p>
+        <div style={{ background:t.card,borderRadius:'12px',padding:'1.5rem',border:`1px solid ${t.cardBorder}` }}>
+          <h3 style={{ color:t.text,margin:'0 0 1rem',fontSize:'.95rem',fontWeight:'700' }}>Recent Registrations</h3>
+          {recentUsers.map(u=>(
+            <div key={u.id} className="adm-user-row" style={{ display:'flex',alignItems:'center',gap:'1rem',padding:'.9rem',background:t.input,borderRadius:'8px',marginBottom:'.5rem',border:`1px solid ${t.cardBorder}` }}>
+              <div style={{ width:'38px',height:'38px',borderRadius:'50%',background:t.blue+'22',color:t.blue,display:'flex',alignItems:'center',justifyContent:'center',fontWeight:'800',flexShrink:0,fontSize:'.9rem' }}>
+                {u.full_name?.charAt(0).toUpperCase()}
               </div>
-              <div style={{ textAlign: 'right' }}>
-                <p style={{ color: '#00ff88', margin: 0, fontWeight: 'bold' }}>${u.balance?.toFixed(2)}</p>
-                <p style={{ color: '#6b7280', margin: '0.1rem 0 0', fontSize: '0.78rem' }}>
-                  {new Date(u.created_at).toLocaleDateString()}
-                </p>
+              <div style={{ flex:1,minWidth:0 }}>
+                <p style={{ color:t.text,margin:0,fontWeight:'600',fontFamily:'DM Sans',fontSize:'.88rem' }}>{u.full_name}</p>
+                <p style={{ color:t.textSub,margin:'.1rem 0 0',fontSize:'.78rem',fontFamily:'DM Sans',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap' }}>{u.email}</p>
+              </div>
+              <div className="adm-user-right" style={{ textAlign:'right',flexShrink:0 }}>
+                <p style={{ color:t.green,margin:0,fontWeight:'700',fontFamily:'DM Sans' }}>${u.balance?.toFixed(2)}</p>
+                <p style={{ color:t.textMuted,margin:'.1rem 0 0',fontSize:'.75rem',fontFamily:'DM Sans' }}>{new Date(u.created_at).toLocaleDateString()}</p>
               </div>
             </div>
           ))}
@@ -127,19 +110,4 @@ export default function AdminDashboard() {
       </div>
     </div>
   )
-}
-
-const styles = {
-  container: { maxWidth: '1100px', margin: '0 auto', padding: '2rem' },
-  header: { marginBottom: '2rem' },
-  grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1.5rem' },
-  card: { background: '#111827', borderRadius: '12px', padding: '1.2rem', display: 'flex', alignItems: 'center', gap: '1rem', border: '1px solid #1f2937' },
-  iconBox: { padding: '0.7rem', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
-  cardLabel: { color: '#6b7280', margin: 0, fontSize: '0.82rem' },
-  cardValue: { margin: '0.2rem 0 0', fontWeight: 'bold', fontSize: '1.3rem' },
-  quickLinks: { display: 'flex', gap: '1rem', marginBottom: '2rem' },
-  quickBtn: { padding: '0.7rem 1.5rem', borderRadius: '8px', textDecoration: 'none', fontWeight: '600', fontSize: '0.9rem' },
-  section: { background: '#111827', borderRadius: '12px', padding: '1.5rem', border: '1px solid #1f2937' },
-  userRow: { display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.9rem', background: '#1f2937', borderRadius: '8px', marginBottom: '0.6rem' },
-  avatar: { width: '38px', height: '38px', borderRadius: '50%', background: '#3b82f622', color: '#3b82f6', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', flexShrink: 0 }
 }
