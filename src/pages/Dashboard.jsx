@@ -132,7 +132,7 @@ export default function Dashboard() {
         *{box-sizing:border-box}
         @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
         @media(max-width:700px){.db-charts{grid-template-columns:1fr!important}.db-row{grid-template-columns:1fr!important}.db-stats{grid-template-columns:1fr 1fr!important}}
-        @media(max-width:420px){.db-stats{grid-template-columns:1fr!important}.db-actions{flex-direction:column!important}}
+        @media(max-width:500px){.db-stats{grid-template-columns:1fr!important}.db-actions{flex-direction:column!important}}
       `}</style>
       <Navbar/>
       <div style={{ maxWidth:'1200px', margin:'0 auto', padding:'2rem 1.5rem' }}>
