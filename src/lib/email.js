@@ -10,8 +10,8 @@ export const sendEmail = async ({ to_email, to_name, subject, html_content }) =>
       },
       body: JSON.stringify({
         sender: {
-          name: 'CryptoVest',
-          email: 'no-reply@cryptovest.com' // replace with your verified sender email
+          name: 'SentientTrade',
+          email: 'no-reply@sentienttrade.com' // replace with your verified sender email
         },
         to: [{ email: to_email, name: to_name }],
         subject,
@@ -32,11 +32,11 @@ export const sendEmail = async ({ to_email, to_name, subject, html_content }) =>
 export const emailTemplates = {
 
   depositConfirmed: ({ name, amount, currency }) => ({
-    subject: '✅ Deposit Confirmed — CryptoVest',
+    subject: '✅ Deposit Confirmed — SentientTrade',
     html_content: `
       <div style="font-family: Arial, sans-serif; background: #0a0f1e; color: #ffffff; padding: 40px; max-width: 600px; margin: 0 auto; border-radius: 16px;">
         <div style="text-align: center; margin-bottom: 30px;">
-          <h1 style="color: #00ff88; font-size: 28px; margin: 0;">💰 CryptoVest</h1>
+          <h1 style="color: #00ff88; font-size: 28px; margin: 0;">💰 SentientTrade</h1>
         </div>
         <div style="background: #111827; padding: 30px; border-radius: 12px; border: 1px solid #1f2937;">
           <h2 style="color: #00ff88; margin-top: 0;">Deposit Confirmed!</h2>
@@ -56,18 +56,18 @@ export const emailTemplates = {
           </div>
         </div>
         <p style="color: #374151; text-align: center; font-size: 12px; margin-top: 20px;">
-          © 2025 CryptoVest. This is an automated message.
+          © 2025 SentientTrade. This is an automated message.
         </p>
       </div>
     `
   }),
 
   withdrawalApproved: ({ name, amount, currency, wallet }) => ({
-    subject: '✅ Withdrawal Approved — CryptoVest',
+    subject: '✅ Withdrawal Approved — SentientTrade',
     html_content: `
       <div style="font-family: Arial, sans-serif; background: #0a0f1e; color: #ffffff; padding: 40px; max-width: 600px; margin: 0 auto; border-radius: 16px;">
         <div style="text-align: center; margin-bottom: 30px;">
-          <h1 style="color: #00ff88; font-size: 28px; margin: 0;">💰 CryptoVest</h1>
+          <h1 style="color: #00ff88; font-size: 28px; margin: 0;">💰 SentientTrade</h1>
         </div>
         <div style="background: #111827; padding: 30px; border-radius: 12px; border: 1px solid #1f2937;">
           <h2 style="color: #00ff88; margin-top: 0;">Withdrawal Approved!</h2>
@@ -90,18 +90,18 @@ export const emailTemplates = {
           <p style="color: #9ca3af;">Please allow up to 24 hours for the crypto to arrive in your wallet.</p>
         </div>
         <p style="color: #374151; text-align: center; font-size: 12px; margin-top: 20px;">
-          © 2025 CryptoVest. This is an automated message.
+          © 2025 SentientTrade. This is an automated message.
         </p>
       </div>
     `
   }),
 
   withdrawalRejected: ({ name, amount }) => ({
-    subject: '❌ Withdrawal Rejected — CryptoVest',
+    subject: '❌ Withdrawal Rejected — SentientTrade',
     html_content: `
       <div style="font-family: Arial, sans-serif; background: #0a0f1e; color: #ffffff; padding: 40px; max-width: 600px; margin: 0 auto; border-radius: 16px;">
         <div style="text-align: center; margin-bottom: 30px;">
-          <h1 style="color: #00ff88; font-size: 28px; margin: 0;">💰 CryptoVest</h1>
+          <h1 style="color: #00ff88; font-size: 28px; margin: 0;">💰 SentientTrade</h1>
         </div>
         <div style="background: #111827; padding: 30px; border-radius: 12px; border: 1px solid #1f2937;">
           <h2 style="color: #ef4444; margin-top: 0;">Withdrawal Rejected</h2>
@@ -121,18 +121,18 @@ export const emailTemplates = {
           </div>
         </div>
         <p style="color: #374151; text-align: center; font-size: 12px; margin-top: 20px;">
-          © 2025 CryptoVest. This is an automated message.
+          © 2025 SentientTrade. This is an automated message.
         </p>
       </div>
     `
   }),
 
   earningCredited: ({ name, amount, planName }) => ({
-    subject: '🎉 Earnings Credited — CryptoVest',
+    subject: '🎉 Earnings Credited — SentientTrade',
     html_content: `
       <div style="font-family: Arial, sans-serif; background: #0a0f1e; color: #ffffff; padding: 40px; max-width: 600px; margin: 0 auto; border-radius: 16px;">
         <div style="text-align: center; margin-bottom: 30px;">
-          <h1 style="color: #00ff88; font-size: 28px; margin: 0;">💰 CryptoVest</h1>
+          <h1 style="color: #00ff88; font-size: 28px; margin: 0;">💰 SentientTrade</h1>
         </div>
         <div style="background: #111827; padding: 30px; border-radius: 12px; border: 1px solid #1f2937;">
           <h2 style="color: #f59e0b; margin-top: 0;">🎉 You just earned!</h2>
@@ -156,7 +156,7 @@ export const emailTemplates = {
           </div>
         </div>
         <p style="color: #374151; text-align: center; font-size: 12px; margin-top: 20px;">
-          © 2025 CryptoVest. This is an automated message.
+          © 2026 SentientTrade. This is an automated message.
         </p>
       </div>
     `
