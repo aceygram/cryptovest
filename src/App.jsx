@@ -26,7 +26,7 @@ import AdminUsers from './pages/admin/AdminUsers'
 import AdminWithdrawals from './pages/admin/AdminWithdrawals'
 import AdminKYC from './pages/admin/AdminKYC'
 import AdminAnnouncements from './pages/admin/AdminAnnouncements'
-import AdminSupport from './pages/admin/AdminSupport'
+import AdminSupport from './pages/admin/Adminsupport'
 
 export default function App() {
   return (
