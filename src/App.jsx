@@ -18,14 +18,14 @@ import Withdraw from './pages/Withdraw'
 import History from './pages/History'
 import Profile from './pages/Profile'
 import KYC from './pages/KYC'
-import InvestmentHistory from './pages/InvestmentHistory'
-import ReferralDashboard from './pages/ReferralDashboard'
+import InvestmentHistory from './pages/Investmenthistory'
+import ReferralDashboard from './pages/Referraldashboard'
 
 import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminUsers from './pages/admin/AdminUsers'
 import AdminWithdrawals from './pages/admin/AdminWithdrawals'
 import AdminKYC from './pages/admin/AdminKYC'
-import AdminAnnouncements from './pages/admin/AdminAnnouncements'
+import AdminAnnouncements from './pages/admin/Adminannouncements'
 import AdminSupport from './pages/admin/Adminsupport'
 
 export default function App() {
