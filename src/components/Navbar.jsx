@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext'
 import { useTheme, tokens } from '../context/ThemeContext'
 import { LayoutDashboard, TrendingUp, ArrowDownCircle, ArrowUpCircle, History, LogOut, Shield, Settings, ChevronDown, User, Sun, Moon, BookOpen, Users, HandHelping } from 'lucide-react'
 
-import AnnouncementBanner from './AnnouncementBanner'
+import AnnouncementBanner from './Announcementbanner'
 
 const SEX_AVATARS = { male:'👨', female:'👩', neutral:'🧑' }
 
