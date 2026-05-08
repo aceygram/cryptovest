@@ -229,7 +229,7 @@ export default function Navbar() {
                   <HandHelping size={13}/> Support Request
                 </Link>
                 <Link to="/admin/announcements" className="nv-link" style={{ display:'flex',alignItems:'center',gap:'.55rem',padding:'0 .9rem',height:'50px',textDecoration:'none',fontSize:'.78rem',fontWeight:'600',color:t.yellow,background:isActive('/admin/announcements')?'rgba(245,158,11,0.07)':'transparent',borderBottom:`2px solid ${isActive('/admin/announcements')?t.yellow:'transparent'}`,transition:'all .2s' }}>
-                  <HandHelping size={13}/> Announcements
+                  <HandHelping size={13}/> Announcement
                 </Link>
               </>
             )}
