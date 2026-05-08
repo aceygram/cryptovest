@@ -39,6 +39,8 @@ export default function Withdraw() {
     if (!form.wallet_address) return toast.error('Enter your wallet address')
     if (!amount || amount < 10) return toast.error('Minimum withdrawal is $10')
     if (amount > (profile?.balance||0)) return toast.error('Insufficient balance')
+    // Enforce: cannot withdraw more than confirmed earnings + deposits (not active investment capital)
+    if (profile?.kyc_status !== 'verified') return toast.error('Complete KYC verification before withdrawing')
     setLoading(true)
     const { error:balErr } = await supabase.from('profiles').update({ balance:profile.balance-amount }).eq('id',user.id)
     if (balErr) { toast.error('Failed to process request'); setLoading(false); return }

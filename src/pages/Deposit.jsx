@@ -43,6 +43,9 @@ export default function Deposit() {
   const handleCreatePayment = async () => {
     if (!coin) return toast.error('Select a cryptocurrency')
     if (!amount || parseFloat(amount) < 10) return toast.error('Minimum deposit is $10')
+    if (parseFloat(amount) > 0 && parseFloat(amount) < 50) {
+      toast('💡 Note: minimum investment plan is $50', { icon: '⚠️', duration: 4000 })
+    }
     setLoading(true)
     try {
       const { data: tx, error: txError } = await supabase.from('transactions').insert({

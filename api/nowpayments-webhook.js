@@ -58,12 +58,12 @@ export default async function handler(req, res) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        sender: { name: 'CryptoVest', email: 'ace4facebook@gmail.com' },
+        sender: { name: 'SentientTrade', email: 'no-reply@sentienttrade.com' },
         to: [{ email: transaction.profiles.email, name: transaction.profiles.full_name }],
-        subject: '✅ Deposit Confirmed — CryptoVest',
+        subject: '✅ Deposit Confirmed — SentientTrade',
         htmlContent: `
           <div style="font-family: Arial, sans-serif; background: #0a0f1e; padding: 40px; max-width: 600px; margin: 0 auto; border-radius: 16px;">
-            <h1 style="color: #00ff88; text-align: center;">💰 CryptoVest</h1>
+            <h1 style="color: #00ff88; text-align: center;">💰 SentientTrade</h1>
             <div style="background: #111827; padding: 30px; border-radius: 12px;">
               <h2 style="color: #00ff88;">Deposit Confirmed!</h2>
               <p style="color: #9ca3af;">Hi ${transaction.profiles.full_name},</p>
@@ -75,7 +75,7 @@ export default async function handler(req, res) {
               </div>
               <p style="color: #9ca3af;">You can now browse and activate investment plans to start earning.</p>
             </div>
-            <p style="color: #374151; text-align: center; font-size: 12px; margin-top: 20px;">© 2025 CryptoVest. This is an automated message.</p>
+            <p style="color: #374151; text-align: center; font-size: 12px; margin-top: 20px;">© 2025 SentientTrade. This is an automated message.</p>
           </div>
         `
       })

@@ -2,7 +2,9 @@ import { useState, useRef, useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useTheme, tokens } from '../context/ThemeContext'
-import { LayoutDashboard, TrendingUp, ArrowDownCircle, ArrowUpCircle, History, LogOut, Shield, Settings, ChevronDown, User, Sun, Moon } from 'lucide-react'
+import { LayoutDashboard, TrendingUp, ArrowDownCircle, ArrowUpCircle, History, LogOut, Shield, Settings, ChevronDown, User, Sun, Moon, BookOpen, Users, HandHelping } from 'lucide-react'
+
+import AnnouncementBanner from './AnnouncementBanner'
 
 const SEX_AVATARS = { male:'👨', female:'👩', neutral:'🧑' }
 
@@ -33,7 +35,9 @@ export default function Navbar() {
     { to:'/deposit',   icon:<ArrowDownCircle size={15}/>, label:'Deposit' },
     { to:'/withdraw',  icon:<ArrowUpCircle size={15}/>,   label:'Withdraw' },
     { to:'/history',   icon:<History size={15}/>,         label:'History' },
-    { to:'/kyc',       icon:<Shield size={15}/>,          label:'KYC' },
+    { to:'/kyc',        icon:<Shield size={15}/>,          label:'KYC' },
+    { to:'/investments', icon:<BookOpen size={15}/>,        label:'My Plans' },
+    { to:'/referrals',   icon:<Users size={15}/>,           label:'Referrals' },
   ]
 
   return (
@@ -61,8 +65,8 @@ export default function Navbar() {
         .hb-open .hb-bar:nth-child(1){transform:translateY(6px) rotate(45deg)}
         .hb-open .hb-bar:nth-child(2){opacity:0;width:0}
         .hb-open .hb-bar:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
-        @media(max-width:860px){.nv-desktop{display:none!important}.nv-balance{display:none!important}.nv-profbtn{display:none!important}.nv-hamburger{display:flex!important}}
-        @media(min-width:861px){.nv-hamburger{display:none!important}.nv-mobile-wrap{display:none!important}}
+        @media(max-width:989px){.nv-desktop{display:none!important}.nv-balance{display:none!important}.nv-profbtn{display:none!important}.nv-hamburger{display:flex!important}}
+        @media(min-width:990px){.nv-hamburger{display:none!important}.nv-mobile-wrap{display:none!important}}
         @keyframes fadeIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
       `}</style>
 
@@ -91,16 +95,7 @@ export default function Navbar() {
                 </Link>
               )
             })}
-            {profile?.is_admin && (
-              <>
-                <Link to="/admin" className="nv-link" style={{ display:'flex',alignItems:'center',gap:'.38rem',padding:'0 .9rem',height:'62px',textDecoration:'none',fontSize:'.78rem',fontWeight:'600',color:t.yellow,background:isActive('/admin')?'rgba(245,158,11,0.07)':'transparent',borderBottom:`2px solid ${isActive('/admin')?t.yellow:'transparent'}`,transition:'all .2s' }}>
-                  <Settings size={15}/> Admin
-                </Link>
-                <Link to="/admin/kyc" className="nv-link" style={{ display:'flex',alignItems:'center',gap:'.38rem',padding:'0 .9rem',height:'62px',textDecoration:'none',fontSize:'.78rem',fontWeight:'600',color:t.yellow,background:isActive('/admin/kyc')?'rgba(245,158,11,0.07)':'transparent',borderBottom:`2px solid ${isActive('/admin/kyc')?t.yellow:'transparent'}`,transition:'all .2s' }}>
-                  <Shield size={15}/> KYC Review
-                </Link>
-              </>
-            )}
+            
           </div>
 
           <div style={{ display:'flex',alignItems:'center',gap:'.7rem',flexShrink:0 }}>
@@ -148,12 +143,29 @@ export default function Navbar() {
                     </div>
                   </Link>
                   <div style={{ height:'1px',background:t.cardBorder,margin:'.3rem 0' }}/>
-                  {[{to:'/kyc',icon:<Shield size={13}/>,label:'KYC Verification'},{to:'/history',icon:<History size={13}/>,label:'Transaction History'}].map(item=>(
+                  {[{to:'/kyc',icon:<Shield size={13}/>,label:'KYC Verification'},{to:'/history',icon:<History size={13}/>,label:'Transaction History'},{to:'/support',icon:<HandHelping size={13}/>,label:'Support'}].map(item=>(
                     <Link key={item.to} to={item.to} className="nv-dd" onClick={() => setProfileOpen(false)}
                       style={{ display:'flex',alignItems:'center',gap:'.55rem',padding:'.52rem .75rem',color:t.textSub,fontFamily:'DM Sans',fontSize:'.82rem',textDecoration:'none',borderRadius:'6px' }}>
                       {item.icon} {item.label}
                     </Link>
                   ))}
+
+                  {profile?.is_admin && (
+              <>
+                <Link to="/admin" className="nv-link" style={{ display:'flex',alignItems:'center',gap:'.55rem',padding:'0 .9rem',height:'32px',textDecoration:'none',fontSize:'.78rem',fontWeight:'600',color:t.yellow,background:isActive('/admin')?'rgba(245,158,11,0.07)':'transparent',borderBottom:`2px solid ${isActive('/admin')?t.yellow:'transparent'}`,transition:'all .2s' }}>
+                  <Settings size={13}/> Admin
+                </Link>
+                <Link to="/admin/kyc" className="nv-link" style={{ display:'flex',alignItems:'center',gap:'.55rem',padding:'0 .9rem',height:'32px',textDecoration:'none',fontSize:'.78rem',fontWeight:'600',color:t.yellow,background:isActive('/admin/kyc')?'rgba(245,158,11,0.07)':'transparent',borderBottom:`2px solid ${isActive('/admin/kyc')?t.yellow:'transparent'}`,transition:'all .2s' }}>
+                  <Shield size={13}/> KYC Review
+                </Link>
+                <Link to="/admin/support" className="nv-link" style={{ display:'flex',alignItems:'center',gap:'.55rem',padding:'0 .9rem',height:'32px',textDecoration:'none',fontSize:'.78rem',fontWeight:'600',color:t.yellow,background:isActive('/admin/support')?'rgba(245,158,11,0.07)':'transparent',borderBottom:`2px solid ${isActive('/admin/support')?t.yellow:'transparent'}`,transition:'all .2s' }}>
+                  <HandHelping size={13}/> Support Request
+                </Link>
+                <Link to="/admin/announcements" className="nv-link" style={{ display:'flex',alignItems:'center',gap:'.55rem',padding:'0 .9rem',height:'32px',textDecoration:'none',fontSize:'.78rem',fontWeight:'600',color:t.yellow,background:isActive('/admin/announcements')?'rgba(245,158,11,0.07)':'transparent',borderBottom:`2px solid ${isActive('/admin/announcements')?t.yellow:'transparent'}`,transition:'all .2s' }}>
+                  <HandHelping size={13}/> Announcements
+                </Link>
+              </>
+            )}
                   <div style={{ height:'1px',background:t.cardBorder,margin:'.3rem 0' }}/>
                   <button className="nv-out" onClick={handleSignOut}
                     style={{ display:'flex',alignItems:'center',gap:'.55rem',padding:'.52rem .75rem',color:t.textSub,fontFamily:'DM Sans',fontSize:'.82rem',borderRadius:'6px',cursor:'pointer',background:'transparent',border:'none',width:'100%' }}>
@@ -205,15 +217,19 @@ export default function Navbar() {
                 </Link>
               )
             })}
-            {profile?.is_admin && (
+                {profile?.is_admin && (
               <>
-                <Link to="/admin" className="nv-mob" onClick={() => setMobileOpen(false)}
-                  style={{ display:'flex',alignItems:'center',gap:'.7rem',padding:'.72rem 1rem',borderRadius:'8px',textDecoration:'none',fontFamily:'DM Sans',fontSize:'.88rem',color:t.yellow,background:'transparent',marginBottom:'.2rem' }}>
-                  <Settings size={15}/> Admin Panel
+                <Link to="/admin" className="nv-link" style={{ display:'flex',alignItems:'center',gap:'.55rem',padding:'0 .9rem',height:'50px',textDecoration:'none',fontSize:'.78rem',fontWeight:'600',color:t.yellow,background:isActive('/admin')?'rgba(245,158,11,0.07)':'transparent',borderBottom:`2px solid ${isActive('/admin')?t.yellow:'transparent'}`,transition:'all .2s' }}>
+                  <Settings size={13}/> Admin
                 </Link>
-                <Link to="/admin/kyc" className="nv-mob" onClick={() => setMobileOpen(false)}
-                  style={{ display:'flex',alignItems:'center',gap:'.7rem',padding:'.72rem 1rem',borderRadius:'8px',textDecoration:'none',fontFamily:'DM Sans',fontSize:'.88rem',color:t.yellow,background:'transparent',marginBottom:'.2rem' }}>
-                  <Shield size={15}/> KYC Review
+                <Link to="/admin/kyc" className="nv-link" style={{ display:'flex',alignItems:'center',gap:'.55rem',padding:'0 .9rem',height:'50px',textDecoration:'none',fontSize:'.78rem',fontWeight:'600',color:t.yellow,background:isActive('/admin/kyc')?'rgba(245,158,11,0.07)':'transparent',borderBottom:`2px solid ${isActive('/admin/kyc')?t.yellow:'transparent'}`,transition:'all .2s' }}>
+                  <Shield size={13}/> KYC Review
+                </Link>
+                <Link to="/admin/support" className="nv-link" style={{ display:'flex',alignItems:'center',gap:'.55rem',padding:'0 .9rem',height:'50px',textDecoration:'none',fontSize:'.78rem',fontWeight:'600',color:t.yellow,background:isActive('/admin/support')?'rgba(245,158,11,0.07)':'transparent',borderBottom:`2px solid ${isActive('/admin/support')?t.yellow:'transparent'}`,transition:'all .2s' }}>
+                  <HandHelping size={13}/> Support Request
+                </Link>
+                <Link to="/admin/announcements" className="nv-link" style={{ display:'flex',alignItems:'center',gap:'.55rem',padding:'0 .9rem',height:'50px',textDecoration:'none',fontSize:'.78rem',fontWeight:'600',color:t.yellow,background:isActive('/admin/announcements')?'rgba(245,158,11,0.07)':'transparent',borderBottom:`2px solid ${isActive('/admin/announcements')?t.yellow:'transparent'}`,transition:'all .2s' }}>
+                  <HandHelping size={13}/> Announcements
                 </Link>
               </>
             )}
@@ -234,6 +250,7 @@ export default function Navbar() {
         </div>
       </nav>
       <div style={{ height:'62px' }}/>
+      <AnnouncementBanner/>
     </>
   )
 }
