@@ -40,7 +40,15 @@ export default function InvestmentHistory() {
 
   return (
     <div style={{ background: t.bg, minHeight: '100vh', fontFamily: "'Syne',sans-serif" }}>
-      <style>{`@import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&display=swap');*{box-sizing:border-box}@media(max-width:600px){.ih-grid{grid-template-columns:1fr 1fr!important}.ih-row{flex-wrap:wrap!important;gap:.6rem!important}}`}</style>
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&display=swap');*{box-sizing:border-box}@media(max-width:700px){
+  .ih-grid{grid-template-columns:1fr 1fr!important}
+  .ih-row{flex-direction:column!important;align-items:flex-start!important;gap:.6rem!important}
+  .ih-amounts{flex-direction:row!important;width:100%!important;justify-content:space-between!important}
+  .ih-status{width:100%!important;flex-direction:row!important;justify-content:space-between!important;align-items:center!important}
+}
+@media(max-width:380px){
+  .ih-grid{grid-template-columns:1fr!important}
+}`}</style>
       <Navbar/>
       <div style={{ maxWidth: '900px', margin: '0 auto', padding: '2rem 1.5rem' }}>
         <h2 style={{ color: t.text, margin: '0 0 .3rem', fontSize: '1.4rem', fontWeight: '800', letterSpacing: '-.02em' }}>Investment History</h2>
@@ -82,7 +90,7 @@ export default function InvestmentHistory() {
               const isCompleted = inv.status === 'completed'
               const daysLeft = inv.status === 'active' ? Math.max(0, Math.ceil((new Date(inv.end_date) - Date.now()) / (24*60*60*1000))) : 0
               return (
-                <div key={inv.id} className="ih-row" style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '.9rem', background: t.input, borderRadius: '10px', marginBottom: '.5rem', border: `1px solid ${t.cardBorder}` }}>
+                <div key={inv.id} className="ih-row" style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '.9rem', background: t.input, borderRadius: '10px', marginBottom: '.5rem', border: `1px solid ${t.cardBorder}`, minWidth:0 }}>
                   <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: isCompleted ? t.green + '18' : t.yellow + '18', border: `1px solid ${isCompleted ? t.green : t.yellow}33`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                     <TrendingUp size={16} color={isCompleted ? t.green : t.yellow}/>
                   </div>
@@ -92,15 +100,17 @@ export default function InvestmentHistory() {
                       {inv.plans?.duration_days} days · {inv.plans?.roi_percent}% ROI · Started {new Date(inv.created_at).toLocaleDateString()}
                     </p>
                   </div>
-                  <div style={{ textAlign: 'center', minWidth: '80px' }}>
-                    <p style={{ color: t.cyan, margin: 0, fontWeight: '700', fontFamily: 'DM Sans', fontSize: '.9rem' }}>${inv.amount}</p>
-                    <p style={{ color: t.textMuted, margin: '.1rem 0 0', fontFamily: 'DM Sans', fontSize: '.72rem' }}>invested</p>
+                  <div className="ih-amounts" style={{ display:'flex', gap:'1rem' }}>
+                    <div style={{ textAlign: 'center', minWidth: '80px' }}>
+                      <p style={{ color: t.cyan, margin: 0, fontWeight: '700', fontFamily: 'DM Sans', fontSize: '.9rem' }}>${inv.amount}</p>
+                      <p style={{ color: t.textMuted, margin: '.1rem 0 0', fontFamily: 'DM Sans', fontSize: '.72rem' }}>invested</p>
+                    </div>
+                    <div style={{ textAlign: 'center', minWidth: '80px' }}>
+                      <p style={{ color: t.green, margin: 0, fontWeight: '700', fontFamily: 'DM Sans', fontSize: '.9rem' }}>+${inv.roi_amount?.toFixed(2)}</p>
+                      <p style={{ color: t.textMuted, margin: '.1rem 0 0', fontFamily: 'DM Sans', fontSize: '.72rem' }}>ROI</p>
+                    </div>
                   </div>
-                  <div style={{ textAlign: 'center', minWidth: '80px' }}>
-                    <p style={{ color: t.green, margin: 0, fontWeight: '700', fontFamily: 'DM Sans', fontSize: '.9rem' }}>+${inv.roi_amount?.toFixed(2)}</p>
-                    <p style={{ color: t.textMuted, margin: '.1rem 0 0', fontFamily: 'DM Sans', fontSize: '.72rem' }}>ROI</p>
-                  </div>
-                  <div style={{ textAlign: 'right', minWidth: '100px' }}>
+                  <div className="ih-status" style={{ textAlign: 'right', minWidth: '100px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '.3rem', justifyContent: 'flex-end', marginBottom: '.2rem' }}>
                       {statusIcon(inv.status)}
                       <span style={{ color: statusColor(inv.status), fontFamily: 'DM Sans', fontSize: '.78rem', fontWeight: '600' }}>{inv.status}</span>

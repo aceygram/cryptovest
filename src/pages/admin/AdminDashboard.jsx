@@ -62,7 +62,7 @@ export default function AdminDashboard() {
           .adm-user-row{flex-wrap:wrap!important;gap:.6rem!important}
           .adm-user-right{width:100%!important;text-align:left!important}
         }
-        @media(max-width:380px){.adm-stat-grid{grid-template-columns:1fr!important}}
+        @media(max-width:500px){.adm-stat-grid{grid-template-columns:1fr!important}}
       `}</style>
       <Navbar/>
       <div style={{ maxWidth:'1100px', margin:'0 auto', padding:'2rem 1.5rem' }}>
@@ -84,7 +84,7 @@ export default function AdminDashboard() {
         </div>
 
         <div className="adm-quick" style={{ display:'flex', gap:'1rem', marginBottom:'2rem', flexWrap:'wrap' }}>
-          {[{to:'/admin/withdrawals',label:'Manage Withdrawals',color:t.red},{to:'/admin/users',label:'Manage Users',color:t.blue},{to:'/admin/kyc',label:'KYC Review',color:t.yellow}].map(btn=>(
+          {[{to:'/admin/withdrawals',label:'Manage Withdrawals',color:t.red},{to:'/admin/users',label:'Manage Users',color:t.blue},{to:'/admin/kyc',label:'KYC Review',color:t.yellow}, {to:'/admin/announcements',label:'Manage Announcements',color:t.green}, {to:'/admin/support',label:'Support',color:t.purple}].map(btn=>(
             <Link key={btn.to} to={btn.to} style={{ padding:'.7rem 1.4rem',borderRadius:'8px',textDecoration:'none',fontWeight:'600',fontSize:'.88rem',fontFamily:'DM Sans',background:btn.color+'18',color:btn.color,border:`1px solid ${btn.color}33` }}>{btn.label}</Link>
           ))}
         </div>

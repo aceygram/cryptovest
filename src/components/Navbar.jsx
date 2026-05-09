@@ -219,17 +219,24 @@ export default function Navbar() {
             })}
                 {profile?.is_admin && (
               <>
-                <Link to="/admin" className="nv-link" style={{ display:'flex',alignItems:'center',gap:'.55rem',padding:'0 .9rem',height:'50px',textDecoration:'none',fontSize:'.78rem',fontWeight:'600',color:t.yellow,background:isActive('/admin')?'rgba(245,158,11,0.07)':'transparent',borderBottom:`2px solid ${isActive('/admin')?t.yellow:'transparent'}`,transition:'all .2s' }}>
+                <Link to="/admin" className="nv-link" style={{ display:'flex',alignItems:'center',gap:'.80rem',padding:'0 1rem',height:'40px',textDecoration:'none',fontSize:'.78rem',fontWeight:'600',color:t.yellow,background:isActive('/admin')?'rgba(245,158,11,0.07)':'transparent',borderBottom:`2px solid ${isActive('/admin')?t.yellow:'transparent'}`,transition:'all .2s' }}>
                   <Settings size={13}/> Admin
                 </Link>
-                <Link to="/admin/kyc" className="nv-link" style={{ display:'flex',alignItems:'center',gap:'.55rem',padding:'0 .9rem',height:'50px',textDecoration:'none',fontSize:'.78rem',fontWeight:'600',color:t.yellow,background:isActive('/admin/kyc')?'rgba(245,158,11,0.07)':'transparent',borderBottom:`2px solid ${isActive('/admin/kyc')?t.yellow:'transparent'}`,transition:'all .2s' }}>
+                {/* <Link to="/admin/kyc" className="nv-link" style={{ display:'flex',alignItems:'center',gap:'.55rem',padding:'0 .9rem',height:'40px',textDecoration:'none',fontSize:'.78rem',fontWeight:'600',color:t.yellow,background:isActive('/admin/kyc')?'rgba(245,158,11,0.07)':'transparent',borderBottom:`2px solid ${isActive('/admin/kyc')?t.yellow:'transparent'}`,transition:'all .2s' }}>
                   <Shield size={13}/> KYC Review
                 </Link>
-                <Link to="/admin/support" className="nv-link" style={{ display:'flex',alignItems:'center',gap:'.55rem',padding:'0 .9rem',height:'50px',textDecoration:'none',fontSize:'.78rem',fontWeight:'600',color:t.yellow,background:isActive('/admin/support')?'rgba(245,158,11,0.07)':'transparent',borderBottom:`2px solid ${isActive('/admin/support')?t.yellow:'transparent'}`,transition:'all .2s' }}>
+                <Link to="/admin/support" className="nv-link" style={{ display:'flex',alignItems:'center',gap:'.55rem',padding:'0 .9rem',height:'40px',textDecoration:'none',fontSize:'.78rem',fontWeight:'600',color:t.yellow,background:isActive('/admin/support')?'rgba(245,158,11,0.07)':'transparent',borderBottom:`2px solid ${isActive('/admin/support')?t.yellow:'transparent'}`,transition:'all .2s' }}>
                   <HandHelping size={13}/> Support Request
                 </Link>
-                <Link to="/admin/announcements" className="nv-link" style={{ display:'flex',alignItems:'center',gap:'.55rem',padding:'0 .9rem',height:'50px',textDecoration:'none',fontSize:'.78rem',fontWeight:'600',color:t.yellow,background:isActive('/admin/announcements')?'rgba(245,158,11,0.07)':'transparent',borderBottom:`2px solid ${isActive('/admin/announcements')?t.yellow:'transparent'}`,transition:'all .2s' }}>
+                <Link to="/admin/announcements" className="nv-link" style={{ display:'flex',alignItems:'center',gap:'.55rem',padding:'0 .9rem',height:'40px',textDecoration:'none',fontSize:'.78rem',fontWeight:'600',color:t.yellow,background:isActive('/admin/announcements')?'rgba(245,158,11,0.07)':'transparent',borderBottom:`2px solid ${isActive('/admin/announcements')?t.yellow:'transparent'}`,transition:'all .2s' }}>
                   <HandHelping size={13}/> Announcement
+                </Link> */}
+              </>
+            )}
+            {!profile?.is_admin && (
+              <>
+                <Link to="/support" className="nv-link" style={{ display:'flex',alignItems:'center',gap:'.80rem',padding:'0 1rem', marginBottom:'.2rem',height:'40px',textDecoration:'none',fontSize:'.78rem',fontWeight:'600',color:isActive('/support')?t.cyan:t.textSub,background:isActive('/support')?'rgba(0,212,255,0.07)':'transparent',transition:'all .2s' }}>
+                  <Settings size={13}/> Support
                 </Link>
               </>
             )}

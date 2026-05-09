@@ -42,14 +42,25 @@ export default function AdminSupport() {
 
   return (
     <div style={{ background:t.bg, minHeight:'100vh', fontFamily:"'Syne',sans-serif" }}>
-      <style>{`@import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&display=swap');*{box-sizing:border-box}@media(max-width:600px){.st-row{flex-wrap:wrap!important;gap:.6rem!important}}`}</style>
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&display=swap');*{box-sizing:border-box}@media(max-width:600px){
+  .st-row{flex-direction:column!important;align-items:flex-start!important;gap:.6rem!important}
+  .st-meta{flex-direction:column!important;align-items:flex-start!important;gap:.4rem!important}
+  .st-actions{width:100%!important}
+  .st-actions button{width:100%!important}
+  .st-modal-actions{flex-direction:column!important}
+  .st-modal{padding:1.2rem!important}
+  .st-badge{align-self:flex-start!important}
+}
+@media(max-width:400px){
+  .st-tabs{flex-wrap:wrap!important}
+}`}</style>
       <Toaster/>
       <Navbar/>
       <div style={{ maxWidth:'1000px', margin:'0 auto', padding:'2rem 1.5rem' }}>
         <h2 style={{ color:t.text, margin:'0 0 .3rem', fontSize:'1.4rem', fontWeight:'800', letterSpacing:'-.02em' }}>Support Tickets</h2>
         <p style={{ color:t.textSub, margin:'0 0 1.5rem', fontFamily:'DM Sans', fontSize:'.88rem' }}>Manage user support requests</p>
 
-        <div style={{ display:'flex', gap:'.5rem', marginBottom:'1.5rem', flexWrap:'wrap' }}>
+        <div className="st-tabs" style={{ display:'flex', gap:'.5rem', marginBottom:'1.5rem', flexWrap:'wrap' }}>
           {['open','resolved','closed','all'].map(tab => (
             <button key={tab} onClick={() => setFilter(tab)}
               style={{ padding:'.48rem 1.1rem', borderRadius:'99px', border:'none', cursor:'pointer', fontSize:'.82rem', fontFamily:'DM Sans', fontWeight:'600', transition:'all .2s', background:filter===tab?'linear-gradient(135deg,#00d4ff,#00ff88)':t.card, color:filter===tab?'#020817':t.textSub, border:filter===tab?'none':`1px solid ${t.cardBorder}` }}>
@@ -64,7 +75,7 @@ export default function AdminSupport() {
           ) : tickets.length === 0 ? (
             <p style={{ color:t.textMuted, textAlign:'center', padding:'3rem', fontFamily:'DM Sans' }}>No {filter} tickets.</p>
           ) : tickets.map(ticket => (
-            <div key={ticket.id} className="st-row" style={{ display:'flex', alignItems:'center', gap:'1rem', padding:'1rem', background:t.input, borderRadius:'10px', marginBottom:'.5rem', border:`1px solid ${t.cardBorder}` }}>
+            <div key={ticket.id} className="st-row" style={{ display:'flex', alignItems:'center', gap:'1rem', padding:'1rem', background:t.input, borderRadius:'10px', marginBottom:'.5rem', border:`1px solid ${t.cardBorder}`, minWidth:0 }}>
               <div style={{ width:'38px', height:'38px', borderRadius:'10px', background:(categoryColors[ticket.category]||t.cyan)+'18', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
                 <MessageCircle size={16} color={categoryColors[ticket.category]||t.cyan}/>
               </div>
@@ -74,17 +85,21 @@ export default function AdminSupport() {
                   {ticket.user_name} · {ticket.user_email} · {new Date(ticket.created_at).toLocaleDateString()}
                 </p>
               </div>
-              <span style={{ padding:'.22rem .65rem', borderRadius:'6px', fontSize:'.72rem', fontFamily:'DM Sans', fontWeight:'600', background:(categoryColors[ticket.category]||t.cyan)+'18', color:categoryColors[ticket.category]||t.cyan, flexShrink:0, textTransform:'capitalize' }}>
-                {ticket.category}
-              </span>
-              <div style={{ display:'flex', alignItems:'center', gap:'.3rem', flexShrink:0 }}>
-                {statusIcon(ticket.status)}
-                <span style={{ color:statusColor(ticket.status), fontFamily:'DM Sans', fontSize:'.78rem', fontWeight:'600' }}>{ticket.status}</span>
+              <div className="st-meta" style={{ display:'flex', alignItems:'center', gap:'.5rem', flexShrink:0, flexWrap:'wrap' }}>
+                <span className="st-badge" style={{ padding:'.22rem .65rem', borderRadius:'6px', fontSize:'.72rem', fontFamily:'DM Sans', fontWeight:'600', background:(categoryColors[ticket.category]||t.cyan)+'18', color:categoryColors[ticket.category]||t.cyan, textTransform:'capitalize' }}>
+                  {ticket.category}
+                </span>
+                <div style={{ display:'flex', alignItems:'center', gap:'.3rem' }}>
+                  {statusIcon(ticket.status)}
+                  <span style={{ color:statusColor(ticket.status), fontFamily:'DM Sans', fontSize:'.78rem', fontWeight:'600' }}>{ticket.status}</span>
+                </div>
+                <div className="st-actions">
+                  <button onClick={() => setViewing(ticket)}
+                    style={{ padding:'.48rem 1rem', background:t.blue+'22', color:t.blue, border:`1px solid ${t.blue}33`, borderRadius:'6px', cursor:'pointer', fontFamily:'DM Sans', fontSize:'.8rem', fontWeight:'600', whiteSpace:'nowrap' }}>
+                    View
+                  </button>
+                </div>
               </div>
-              <button onClick={() => setViewing(ticket)}
-                style={{ padding:'.48rem 1rem', background:t.blue+'22', color:t.blue, border:`1px solid ${t.blue}33`, borderRadius:'6px', cursor:'pointer', fontFamily:'DM Sans', fontSize:'.8rem', fontWeight:'600', flexShrink:0 }}>
-                View
-              </button>
             </div>
           ))}
         </div>
@@ -92,7 +107,7 @@ export default function AdminSupport() {
         {/* Modal */}
         {viewing && (
           <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,.75)', display:'flex', alignItems:'center', justifyContent:'center', zIndex:1000, padding:'1rem' }}>
-            <div style={{ background:t.card, borderRadius:'16px', padding:'2rem', width:'100%', maxWidth:'600px', maxHeight:'90vh', overflowY:'auto', border:`1px solid ${t.cardBorder}`, boxShadow:t.shadow }}>
+            <div className="st-modal" style={{ background:t.card, borderRadius:'16px', padding:'2rem', width:'100%', maxWidth:'600px', maxHeight:'90vh', overflowY:'auto', border:`1px solid ${t.cardBorder}`, boxShadow:t.shadow }}>
               <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:'1.4rem' }}>
                 <div>
                   <p style={{ color:t.text, margin:0, fontWeight:'800', fontSize:'1rem' }}>{viewing.subject}</p>
@@ -108,7 +123,7 @@ export default function AdminSupport() {
               </div>
 
               {viewing.status === 'open' && (
-                <div style={{ display:'flex', gap:'.7rem' }}>
+                <div className="st-modal-actions" style={{ display:'flex', gap:'.7rem' }}>
                   <button onClick={() => updateStatus(viewing.id, 'resolved')} disabled={processing === viewing.id}
                     style={{ flex:1, padding:'.82rem', background:t.green+'22', color:t.green, border:`1px solid ${t.green}44`, borderRadius:'10px', fontFamily:'Syne', fontWeight:'700', fontSize:'.9rem', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:'.4rem' }}>
                     <CheckCircle size={15}/> Mark Resolved
