@@ -3,7 +3,7 @@
 //
 // Required env var in Vercel dashboard:
 //   BREVO_API_KEY  (no VITE_ prefix — this is server-only, never exposed to the browser)
-//   SENDER_EMAIL   (your verified Brevo sender, e.g. no-reply@sentienttrade.com)
+//   SENDER_EMAIL   (your verified Brevo sender, e.g. no-reply@sentienttrade.online)
 
 export default async function handler(req, res) {
   // Only allow POST
@@ -19,7 +19,7 @@ export default async function handler(req, res) {
   }
 
   const BREVO_API_KEY = process.env.BREVO_API_KEY
-  const SENDER_EMAIL = process.env.SENDER_EMAIL || 'no-reply@sentienttrade.com'
+  const SENDER_EMAIL = process.env.SENDER_EMAIL || 'no-reply@sentienttrade.online'
 
   if (!BREVO_API_KEY) {
     console.error('BREVO_API_KEY env var is not set')
