@@ -1,34 +1,32 @@
-const BREVO_API_KEY = import.meta.env.VITE_BREVO_API_KEY
+// lib/email.js
+// Calls your own Vercel API route (/api/send-email) instead of Brevo directly.
+// This fixes the CORS block and keeps BREVO_API_KEY off the client bundle.
+
+const APP_URL = import.meta.env.APP_URL || ''
+// Set APP_URL in your .env:
+//    APP_URL=https://yourapp.vercel.app
+// Leave empty for relative URLs (works fine on the same domain)
 
 export const sendEmail = async ({ to_email, to_name, subject, html_content }) => {
   try {
-    const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+    const response = await fetch(`${APP_URL}/api/send-email`, {
       method: 'POST',
-      headers: {
-        'api-key': BREVO_API_KEY,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        sender: {
-          name: 'SentientTrade',
-          email: 'no-reply@sentienttrade.com' // replace with your verified sender email
-        },
-        to: [{ email: to_email, name: to_name }],
-        subject,
-        htmlContent: html_content
-      })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ to_email, to_name, subject, html_content })
     })
 
     if (!response.ok) {
       const err = await response.json()
-      console.error('Brevo error:', err)
+      console.error('sendEmail error:', err)
     }
   } catch (err) {
-    console.error('Email send failed:', err)
+    console.error('sendEmail failed:', err)
   }
 }
 
-// Email templates
+// ─── Email Templates ────────────────────────────────────────────────────────
+// Replace APP_URL in .env and all links below will be correct automatically.
+
 export const emailTemplates = {
 
   depositConfirmed: ({ name, amount, currency }) => ({
@@ -49,14 +47,14 @@ export const emailTemplates = {
           </div>
           <p style="color: #9ca3af;">You can now browse and activate investment plans to start earning.</p>
           <div style="text-align: center; margin-top: 25px;">
-            <a href="https://your-vercel-url.vercel.app/plans" 
+            <a href="${APP_URL}/plans"
                style="background: #00ff88; color: #0a0f1e; padding: 12px 30px; border-radius: 8px; text-decoration: none; font-weight: bold;">
               Browse Plans
             </a>
           </div>
         </div>
         <p style="color: #374151; text-align: center; font-size: 12px; margin-top: 20px;">
-          © 2025 SentientTrade. This is an automated message.
+          © 2026 SentientTrade. This is an automated message.
         </p>
       </div>
     `
@@ -90,7 +88,7 @@ export const emailTemplates = {
           <p style="color: #9ca3af;">Please allow up to 24 hours for the crypto to arrive in your wallet.</p>
         </div>
         <p style="color: #374151; text-align: center; font-size: 12px; margin-top: 20px;">
-          © 2025 SentientTrade. This is an automated message.
+          © 2026 SentientTrade. This is an automated message.
         </p>
       </div>
     `
@@ -114,14 +112,14 @@ export const emailTemplates = {
           </div>
           <p style="color: #9ca3af;">If you believe this was an error, please contact support.</p>
           <div style="text-align: center; margin-top: 25px;">
-            <a href="https://your-vercel-url.vercel.app/dashboard" 
+            <a href="${APP_URL}/dashboard"
                style="background: #1f2937; color: #fff; padding: 12px 30px; border-radius: 8px; text-decoration: none; font-weight: bold;">
               View Dashboard
             </a>
           </div>
         </div>
         <p style="color: #374151; text-align: center; font-size: 12px; margin-top: 20px;">
-          © 2025 SentientTrade. This is an automated message.
+          © 2026 SentientTrade. This is an automated message.
         </p>
       </div>
     `
@@ -145,11 +143,11 @@ export const emailTemplates = {
           </div>
           <p style="color: #9ca3af;">Your earnings are now available for withdrawal or reinvestment.</p>
           <div style="text-align: center; margin-top: 25px;">
-            <a href="https://your-vercel-url.vercel.app/withdraw" 
+            <a href="${APP_URL}/withdraw"
                style="background: #f59e0b; color: #0a0f1e; padding: 12px 30px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-right: 10px;">
               Withdraw
             </a>
-            <a href="https://your-vercel-url.vercel.app/plans" 
+            <a href="${APP_URL}/plans"
                style="background: #1f2937; color: #fff; padding: 12px 30px; border-radius: 8px; text-decoration: none; font-weight: bold;">
               Reinvest
             </a>
