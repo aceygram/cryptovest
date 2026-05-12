@@ -45,14 +45,19 @@ export default async function handler(req, res) {
     })
 
     if (!response.ok) {
-      const err = await response.json()
-      console.error('Brevo API error:', err)
-      return res.status(502).json({ error: 'Email provider error', details: err })
+      let errDetails
+      try {
+        errDetails = await response.json()
+      } catch {
+        errDetails = { message: `Brevo returned ${response.status} ${response.statusText}` }
+      }
+      console.error('Brevo API error:', errDetails)
+      return res.status(502).json({ error: 'Email provider error', details: errDetails })
     }
 
     return res.status(200).json({ success: true })
   } catch (err) {
     console.error('send-email handler error:', err)
-    return res.status(500).json({ error: 'Internal server error' })
+    return res.status(500).json({ error: 'Internal server error', message: err.message })
   }
 }

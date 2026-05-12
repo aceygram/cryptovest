@@ -27,22 +27,24 @@ export default function AdminWithdrawals() {
   const handleApprove = async (tx) => {
     setProcessing(tx.id)
     const { error } = await supabase.from('transactions').update({ status:'confirmed' }).eq('id',tx.id)
-    if (error) { toast.error('Failed to approve') } else {
-      const template = emailTemplates.withdrawalApproved({ name:tx.profiles?.full_name, amount:tx.amount, currency:tx.crypto_currency, wallet:tx.crypto_address })
-      await sendEmail({ to_email:tx.profiles?.email, to_name:tx.profiles?.full_name, ...template })
-      toast.success(`Approved $${tx.amount}`); fetchWithdrawals()
-    }
+    if (error) { toast.error('Failed to approve'); setProcessing(null); return }
+    const template = emailTemplates.withdrawalApproved({ name:tx.profiles?.full_name, amount:tx.amount, currency:tx.crypto_currency, wallet:tx.crypto_address })
+    const emailRes = await sendEmail({ to_email:tx.profiles?.email, to_name:tx.profiles?.full_name, ...template })
+    if (!emailRes.success) toast.error('Email failed: ' + emailRes.error)
+    else toast.success(`Approved $${tx.amount}`)
+    fetchWithdrawals()
     setProcessing(null)
   }
 
   const handleReject = async (tx) => {
     setProcessing(tx.id)
     const { error } = await supabase.rpc('refund_withdrawal',{ transaction_id:tx.id })
-    if (error) { toast.error('Failed to reject') } else {
-      const template = emailTemplates.withdrawalRejected({ name:tx.profiles?.full_name, amount:tx.amount })
-      await sendEmail({ to_email:tx.profiles?.email, to_name:tx.profiles?.full_name, ...template })
-      toast.success(`Rejected & refunded $${tx.amount}`); fetchWithdrawals()
-    }
+    if (error) { toast.error('Failed to reject: ' + error.message); setProcessing(null); return }
+    const template = emailTemplates.withdrawalRejected({ name:tx.profiles?.full_name, amount:tx.amount })
+    const emailRes = await sendEmail({ to_email:tx.profiles?.email, to_name:tx.profiles?.full_name, ...template })
+    if (!emailRes.success) toast.error('Email failed: ' + emailRes.error)
+    else toast.success(`Rejected & refunded $${tx.amount}`)
+    fetchWithdrawals()
     setProcessing(null)
   }
 

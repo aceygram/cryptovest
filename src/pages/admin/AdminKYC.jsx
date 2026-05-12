@@ -43,12 +43,13 @@ export default function AdminKYC() {
   const handleApprove = async (user) => {
     setProcessing(user.id)
     await supabase.from('profiles').update({ kyc_status:'verified', kyc_reviewed_at:new Date().toISOString(), kyc_rejection_reason:null }).eq('id',user.id)
-    await sendEmail({
+    const emailRes = await sendEmail({
       to_email:user.email, to_name:user.full_name,
       subject:'✅ KYC Verified — SentientTrade',
       html_content:`<div style="font-family:Arial,sans-serif;background:#020817;padding:40px;max-width:600px;margin:0 auto;border-radius:16px;"><h1 style="color:#00d4ff;text-align:center;">SentientTrade</h1><div style="background:#030e1f;padding:30px;border-radius:12px;"><h2 style="color:#00ff88;">Identity Verified!</h2><p style="color:#9ca3af;">Hi ${user.full_name},</p><p style="color:#9ca3af;">Your identity has been verified. Your account is now fully activated and you can make withdrawals without restrictions.</p></div></div>`
     })
-    toast.success(`${user.full_name} verified`)
+    if (!emailRes.success) toast.error('Email failed: ' + emailRes.error)
+    else toast.success(`${user.full_name} verified`)
     setViewing(null); fetchSubmissions(); setProcessing(null)
   }
 
@@ -56,12 +57,13 @@ export default function AdminKYC() {
     if (!rejectReason) return toast.error('Enter a rejection reason')
     setProcessing(user.id)
     await supabase.from('profiles').update({ kyc_status:'rejected', kyc_reviewed_at:new Date().toISOString(), kyc_rejection_reason:rejectReason }).eq('id',user.id)
-    await sendEmail({
+    const emailRes = await sendEmail({
       to_email:user.email, to_name:user.full_name,
       subject:'❌ KYC Rejected — SentientTrade',
       html_content:`<div style="font-family:Arial,sans-serif;background:#020817;padding:40px;max-width:600px;margin:0 auto;border-radius:16px;"><h1 style="color:#00d4ff;text-align:center;">SentientTrade</h1><div style="background:#030e1f;padding:30px;border-radius:12px;"><h2 style="color:#ef4444;">KYC Rejected</h2><p style="color:#9ca3af;">Hi ${user.full_name},</p><p style="color:#9ca3af;">Your KYC submission was rejected:</p><div style="background:#ef444411;border:1px solid #ef444433;padding:15px;border-radius:8px;margin:15px 0;"><p style="color:#ef4444;margin:0;">${rejectReason}</p></div><p style="color:#9ca3af;">Please resubmit with correct documents.</p></div></div>`
     })
-    toast.success(`${user.full_name} rejected`)
+    if (!emailRes.success) toast.error('Email failed: ' + emailRes.error)
+    else toast.success(`${user.full_name} rejected`)
     setViewing(null); setRejectReason(''); fetchSubmissions(); setProcessing(null)
   }
 

@@ -37,8 +37,9 @@ export default function AdminUsers() {
     if (error) { toast.error('Failed to credit earning'); setCrediting(null); return }
     await supabase.from('transactions').insert({ user_id:user.id, type:'earning', amount, status:'confirmed' })
     const template = emailTemplates.earningCredited({ name:user.full_name, amount, planName:null })
-    await sendEmail({ to_email:user.email, to_name:user.full_name, ...template })
-    toast.success(`$${amount} credited to ${user.full_name}`)
+    const emailRes = await sendEmail({ to_email:user.email, to_name:user.full_name, ...template })
+    if (!emailRes.success) toast.error('Email failed: ' + emailRes.error)
+    else toast.success(`$${amount} credited to ${user.full_name}`)
     setCreditForm({...creditForm,[user.id]:''})
     fetchUsers(); setCrediting(null)
   }

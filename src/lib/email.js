@@ -2,11 +2,16 @@
 // Calls your own Vercel API route (/api/send-email) instead of Brevo directly.
 // This fixes the CORS block and keeps BREVO_API_KEY off the client bundle.
 
-const APP_URL = import.meta.env.APP_URL || ''
+const APP_URL = import.meta.env.VITE_APP_URL || ''
 // Set APP_URL in your .env:
-//    APP_URL=https://yourapp.vercel.app
+//    VITE_APP_URL=https://yourapp.vercel.app
 // Leave empty for relative URLs (works fine on the same domain)
 
+/**
+ * Send an email via the server-side /api/send-email endpoint.
+ * Returns { success: true } or { success: false, error: string }
+ * Callers should check the return value and show a toast on failure.
+ */
 export const sendEmail = async ({ to_email, to_name, subject, html_content }) => {
   try {
     const response = await fetch(`${APP_URL}/api/send-email`, {
@@ -16,16 +21,27 @@ export const sendEmail = async ({ to_email, to_name, subject, html_content }) =>
     })
 
     if (!response.ok) {
-      const err = await response.json()
-      console.error('sendEmail error:', err)
+      let errMsg = `HTTP ${response.status}`
+      try {
+        const err = await response.json()
+        errMsg = err.error || JSON.stringify(err)
+      } catch {
+        // response wasn't JSON (e.g., HTML error page)
+        errMsg = `HTTP ${response.status} — ${response.statusText}`
+      }
+      console.error('sendEmail error:', errMsg)
+      return { success: false, error: errMsg }
     }
+
+    return { success: true }
   } catch (err) {
     console.error('sendEmail failed:', err)
+    return { success: false, error: err.message || 'Network error' }
   }
 }
 
 // ─── Email Templates ────────────────────────────────────────────────────────
-// Replace APP_URL in .env and all links below will be correct automatically.
+// Replace VITE_APP_URL in .env and all links below will be correct automatically.
 
 export const emailTemplates = {
 
