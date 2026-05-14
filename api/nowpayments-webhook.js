@@ -112,7 +112,7 @@ export default async function handler(req, res) {
   const profile = transaction.profiles
   if (profile?.email) {
     const BREVO_API_KEY = process.env.BREVO_API_KEY
-    const SENDER_EMAIL = process.env.SENDER_EMAIL || 'no-reply@sentienttrade.com'
+    const SENDER_EMAIL = process.env.SENDER_EMAIL || 'no-reply@sentienttrade.online'
     const APP_URL = process.env.APP_URL || ''
 
     if (!BREVO_API_KEY) {
