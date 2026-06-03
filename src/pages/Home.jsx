@@ -90,7 +90,7 @@ export default function Home() {
     if (!form.email.trim()) { setMsg({ text: 'Enter your email address', type: 'error' }); return }
     setLoading(true)
     const { error } = await supabase.auth.resetPasswordForEmail(form.email, {
-      redirectTo: 'https://sentienttrade.online/reset-password'
+      redirectTo: 'https://www.sentienttrade.online/reset-password'
     })
     if (error) setMsg({ text: error.message, type: 'error' })
     else setForgotSent(true)

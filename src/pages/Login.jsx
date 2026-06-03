@@ -30,7 +30,7 @@ export default function Login() {
     if (!form.email) return toast.error('Enter your email address')
     setLoading(true)
     const { error } = await supabase.auth.resetPasswordForEmail(form.email, {
-      redirectTo: `https://sentienttrade.online/reset-password`
+      redirectTo: `https://www.sentienttrade.online/reset-password`
     })
     if (error) toast.error(error.message)
     else setResetSent(true)
