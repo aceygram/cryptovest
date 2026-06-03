@@ -42,6 +42,12 @@ export const AuthProvider = ({ children }) => {
     })
 
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      // Intercept password recovery before anything else
+      if (_event === 'PASSWORD_RECOVERY') {
+        window.location.href = '/reset-password'
+        return
+      }
+
       const currentUser = session?.user ?? null
       setUser(currentUser)
       if (currentUser) { fetchProfile(currentUser.id); resetTimer() }
