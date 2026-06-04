@@ -98,10 +98,11 @@ export default function Home() {
   }
 
   const plans = [
-    { name: 'Starter', roi: '5%', duration: '7 days', min: '$50', color: '#00d4ff' },
-    { name: 'Growth', roi: '10%', duration: '14 days', min: '$500', color: '#00ff88', featured: true },
-    { name: 'Premium', roi: '20%', duration: '30 days', min: '$2,000', color: '#f59e0b' },
-    { name: 'Elite', roi: '35%', duration: '60 days', min: '$10,000', color: '#8b5cf6' },
+    { name: 'Amateur AI', roi: '10% Daily', duration: '336 hours', min: '$1000', max: '$4,999', color: '#00d4ff', model: '14DB1' },
+    { name: 'Semi-Pro AI', roi: '8% Daily', duration: '504 hours', min: '$5000', max: '$10,999', color: '#00ff88', featured: true, model: '21DB2' },
+    { name: 'Pro AI', roi: '6% Daily', duration: '744 hours', min: '$11,000', max: '$29,999', color: '#f59e0b', model: '31DP3' },
+    { name: 'Superior AI', roi: '4% Daily', duration: '912 hours', min: '$30,000', max: '$49,999', color: '#8b5cf6', model: '38DP3' },
+    { name: 'Ultimate AI', roi: 'Coming Soon', duration: 'Coming Soon', min: '$50,000', max: '$99,999', color: '#f65c9c', model: 'Coming Soon' },
   ]
 
   const steps = [
@@ -209,10 +210,6 @@ export default function Home() {
           .hmb{display:flex!important}
           .htitle{font-size:2.1rem!important;line-height:1.15!important}
           .stitle{font-size:1.75rem!important}
-          .sgrid{grid-template-columns:1fr 1fr!important}
-          .pgrid{grid-template-columns:1fr 1fr!important}
-          .stepgrid{grid-template-columns:1fr 1fr!important}
-          .tgrid{grid-template-columns:1fr!important}
           .spads{padding:3.5rem 0!important}
           .hctas{flex-direction:column!important;align-items:stretch!important}
           .hcta{text-align:center!important}
@@ -221,14 +218,25 @@ export default function Home() {
           .footer-row{flex-direction:column!important;text-align:center!important;gap:.8rem!important}
           .footer-links{justify-content:center!important}
           .sin{padding:0 1.2rem!important}
+          .pc{grid-column:span 1!important}
+
+          /* 2 columns side-by-side on tablet */
+          .sgrid{grid-template-columns:1fr 1fr!important}
+          .pgrid{grid-template-columns:1fr 1fr!important}
+          .stepgrid{grid-template-columns:1fr 1fr!important}
+          .tgrid{grid-template-columns:1fr!important}
         }
+
         @media(max-width:480px){
           .htitle{font-size:1.75rem!important}
-          .pgrid{grid-template-columns:1fr!important}
-          .stepgrid{grid-template-columns:1fr!important}
           .authcard{padding:1.4rem!important}
           .sin{padding:0 1rem!important}
-          .sgrid{grid-template-columns:1fr 1fr!important}
+
+          /* Straight single-column grid on mobile */
+          .sgrid{grid-template-columns:1fr!important}
+          .pgrid{grid-template-columns:1fr!important}
+          .stepgrid{grid-template-columns:1fr!important}
+          .tgrid{grid-template-columns:1fr!important}
         }
       `}</style>
 
@@ -455,26 +463,72 @@ export default function Home() {
               Choose Your <span className="grad-text">Growth Path</span>
             </h2>
           </div>
-          <div className="pgrid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '1.1rem' }}>
-            {plans.map((plan, i) => (
-              <div key={i} className="pc" style={{ background: plan.featured ? c.planCardFeatured : c.planCard, border: `1px solid ${plan.featured ? plan.color + '55' : c.border}`, borderRadius: '14px', padding: '1.5rem', position: 'relative', display: 'flex', flexDirection: 'column', gap: '.45rem', boxShadow: plan.featured ? `0 0 36px ${plan.color}15` : 'none' }}>
-                {plan.featured && <div style={{ position: 'absolute', top: '-11px', left: '50%', transform: 'translateX(-50%)', background: 'linear-gradient(90deg,#00d4ff,#00ff88)', color: '#020817', fontSize: '.68rem', fontWeight: '700', padding: '.2rem .75rem', borderRadius: '99px', whiteSpace: 'nowrap' }}>Most Popular</div>}
-                <div style={{ color: plan.color, fontSize: '2rem', fontWeight: '800', letterSpacing: '-.03em' }}>{plan.roi}</div>
-                <div style={{ color: c.textLight, fontFamily: 'DM Sans', fontSize: '.86rem', marginBottom: '.2rem' }}>{plan.name}</div>
-                <div style={{ height: '1px', background: c.border, margin: '.2rem 0' }} />
-                {[['Duration', plan.duration, false], ['Min. Deposit', plan.min, false], ['Capital Return', '✓ Included', true]].map(([l, v, green], j) => (
-                  <div key={j} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ color: c.trustText, fontFamily: 'DM Sans', fontSize: '.78rem' }}>{l}</span>
-                    <span style={{ color: green ? '#00ff88' : c.textLight, fontFamily: 'DM Sans', fontSize: '.8rem', fontWeight: '500' }}>{v}</span>
-                  </div>
-                ))}
-                <a href="#auth" onClick={() => setActiveTab('register')}
-                  style={{ marginTop: '.7rem', display: 'block', textAlign: 'center', border: `1px solid ${plan.color}44`, borderRadius: '8px', padding: '.62rem', textDecoration: 'none', fontFamily: 'DM Sans', fontSize: '.8rem', fontWeight: '600', color: plan.color }}>
-                  Start with {plan.name}
-                </a>
-              </div>
-            ))}
-          </div>
+          <div className="pgrid" style={{ display: 'grid', gridTemplateColumns: 'repeat(6,1fr)', gap: '1.1rem' }}>
+          {plans.map((plan, i) => {
+            const isLast = i === plans.length - 1;
+            return (
+            <div
+              key={i}
+              className="pc"
+              style={{
+                background: plan.featured ? c.planCardFeatured : c.planCard,
+                gridColumn: i === 3 ? '2 / span 2' : i === 4 ? '4 / span 2' : 'span 2',
+                border: `1px solid ${plan.featured ? plan.color + '55' : c.border}`,
+                borderRadius: '14px',
+                padding: '1.5rem',
+                position: 'relative',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '.45rem',
+                boxShadow: plan.featured ? `0 0 36px ${plan.color}15` : 'none',
+              }}
+            >
+              {plan.featured && (
+                <div style={{ position: 'absolute', top: '-11px', left: '50%', transform: 'translateX(-50%)', background: 'linear-gradient(90deg,#00d4ff,#00ff88)', color: '#020817', fontSize: '.68rem', fontWeight: '700', padding: '.2rem .75rem', borderRadius: '99px', whiteSpace: 'nowrap' }}>
+                  Most Popular
+                </div>
+              )}
+              <div style={{ color: plan.color, fontSize: isLast ? '1.9rem' : '2rem', fontWeight: '800', letterSpacing: '-.03em' }}>{plan.roi}</div>
+              <div style={{ color: c.textLight, fontFamily: 'DM Sans', fontSize: '.86rem', marginBottom: '.2rem' }}>{plan.name}</div>
+              <div style={{ height: '1px', background: c.border, margin: '.2rem 0' }} />
+              {[['Duration', plan.duration, false], ['AI Model', plan.model, false], ['Min. Deposit', plan.min, false], ['Max. Deposit', plan.max, false], ['AI Model', '✓ ' + plan.model, true]].map(([l, v, green], j) => (
+                <div key={j} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: c.trustText, fontFamily: 'DM Sans', fontSize: '.78rem' }}>{l}</span>
+                  <span style={{ color: green ? '#00ff88' : c.textLight, fontFamily: 'DM Sans', fontSize: '.8rem', fontWeight: '500' }}>{v}</span>
+                </div>
+              ))}
+              <a
+                href={isLast ? undefined : '#auth'}
+                onClick={(e) => {
+                  if (isLast) {
+                    e.preventDefault();
+                    return;
+                  }
+                  setActiveTab('register');
+                }}
+                style={{
+                  marginTop: '.7rem',
+                  display: 'block',
+                  textAlign: 'center',
+                  border: `1px solid ${isLast ? c.border : plan.color + '44'}`,
+                  borderRadius: '8px',
+                  padding: '.62rem',
+                  textDecoration: 'none',
+                  fontFamily: 'DM Sans',
+                  fontSize: '.8rem',
+                  fontWeight: '600',
+                  color: isLast ? c.textMuted : plan.color,
+                  cursor: isLast ? 'not-allowed' : 'pointer',
+                  background: isLast ? c.input : 'transparent',
+                  opacity: isLast ? 0.6 : 1,
+                }}
+              >
+                {isLast ? 'Coming Soon' : 'Buy AI Model'}
+              </a>
+            </div>
+            );
+          })}
+        </div>
         </div>
       </section>
 
