@@ -113,9 +113,9 @@ export default function Home() {
   ]
 
   const testimonials = [
-    { name: 'Peter O.', location: 'New york, USA', text: 'Returns have been consistent every single cycle. The AI bot genuinely works.', roi: '+18%' },
-    { name: 'Priya K.', location: 'London, UK', text: 'Set it and forget it. Earnings were credited exactly on time.', roi: '+10%' },
-    { name: 'David M.', location: 'Texas, USA', text: 'Smooth platform, responsive support. Already on my third cycle.', roi: '+35%' },
+    { name: 'Peter O.', location: 'New york, USA', text: 'Returns have been consistent every single cycle. This AI bot genuinely works.', roi: '+10%' },
+    { name: 'Priya K.', location: 'London, UK', text: 'Set it and forget it. Earnings were credited exactly on time.', roi: '+4%' },
+    { name: 'David M.', location: 'Texas, USA', text: 'Smooth platform, responsive support. Already on my third cycle.', roi: '+8%' },
   ]
 
   // Theme-aware color palette
@@ -381,7 +381,7 @@ export default function Home() {
       <section style={{ background: c.bgAlt, borderTop: `1px solid ${c.border}`, borderBottom: `1px solid ${c.border}`, padding: '2.8rem 0' }}>
         <div className="sin" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 2rem' }}>
           <div className="sgrid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '1rem' }}>
-            {[['2,400+', 'Active Investors', '👥'], ['$4.2M+', 'Volume Traded', '📈'], ['99.9%', 'Platform Uptime', '⚡'], ['35%', 'Max ROI/Cycle', '💰']].map(([v, l, ic], i) => (
+            {[['2,400+', 'Active Investors', '👥'], ['$4.2M+', 'Volume Traded', '📈'], ['99.9%', 'Platform Uptime', '⚡'], ['10%', 'Max ROI/Cycle', '💰']].map(([v, l, ic], i) => (
               <div key={i} style={{ textAlign: 'center', padding: '1rem' }}>
                 <div style={{ fontSize: '1.6rem', marginBottom: '.3rem' }}>{ic}</div>
                 <div style={{ color: c.text, fontSize: '1.7rem', fontWeight: '800', letterSpacing: '-.03em' }}>{v}</div>
@@ -491,7 +491,7 @@ export default function Home() {
               <div style={{ color: plan.color, fontSize: isLast ? '1.9rem' : '2rem', fontWeight: '800', letterSpacing: '-.03em' }}>{plan.roi}</div>
               <div style={{ color: c.textLight, fontFamily: 'DM Sans', fontSize: '.86rem', marginBottom: '.2rem' }}>{plan.name}</div>
               <div style={{ height: '1px', background: c.border, margin: '.2rem 0' }} />
-              {[['Duration', plan.duration, false], ['AI Model', plan.model, false], ['Min. Deposit', plan.min, false], ['Max. Deposit', plan.max, false], ['AI Model', '✓ ' + plan.model, true]].map(([l, v, green], j) => (
+              {[['Duration', plan.duration, false], ['Min. Deposit', plan.min, false], ['Max. Deposit', plan.max, false], ['AI Model', '✓ ' + plan.model, true]].map(([l, v, green], j) => (
                 <div key={j} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: c.trustText, fontFamily: 'DM Sans', fontSize: '.78rem' }}>{l}</span>
                   <span style={{ color: green ? '#00ff88' : c.textLight, fontFamily: 'DM Sans', fontSize: '.8rem', fontWeight: '500' }}>{v}</span>
