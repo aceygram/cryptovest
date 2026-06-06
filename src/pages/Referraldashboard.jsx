@@ -14,6 +14,7 @@ const REFERRERS = {
   'james4rt': { name:'James Oluwole',       avatar:'👨‍🦱' },
   'lucy55wx': { name:'Lucy Chen',           avatar:'👩‍🦰' },
   'soph55wx': { name:'Sophie Cunningham',   avatar:'👩‍🦰' },
+  'nic088lp': { name:'Nicole Denali walker', avatar:'🧟' },
   'dan001zz': { name:'Daniel Musa',         avatar:'👨‍🦳' },
   'emma88kk': { name:'Emma Williams',       avatar:'👩‍🦳' },
   'tony12pp': { name:'Tony Adeyemi',        avatar:'🧑‍💼' },
