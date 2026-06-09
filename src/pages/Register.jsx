@@ -25,7 +25,7 @@ export default function Register() {
   const [step, setStep] = useState(1)
   const [countries, setCountries] = useState([])
   const [loadingCountries, setLoadingCountries] = useState(true)
-  const [form, setForm] = useState({ full_name:'',email:'',dob:'',sex:'',country:'',phone_code:'+234',phone:'',password:'',confirm_password:'',ref_code:'' })
+  const [form, setForm] = useState({ full_name:'',email:'',dob:'',sex:'',country:'',phone_code:'+1',phone_cca2:'US',phone:'',password:'',confirm_password:'',ref_code:'' })
   const [loading, setLoading] = useState(false)
   const [showCodePicker, setShowCodePicker] = useState(false)
   const [codeSearch, setCodeSearch] = useState('')
@@ -52,15 +52,15 @@ export default function Register() {
           const detected=list.find(c=>c.cca2===loc.country_code)
           const fallback=list.find(c=>c.cca2==='NG')
           const match=detected||fallback
-          if(match) setForm(f=>({...f,phone_code:match.code}))
-        }).catch(()=>{ const ng=list.find(c=>c.cca2==='NG'); if(ng) setForm(f=>({...f,phone_code:ng.code})) })
+          if(match) setForm(f=>({...f,phone_code:match.code,phone_cca2:match.cca2}))
+        }).catch(()=>{ const ng=list.find(c=>c.cca2==='NG'); if(ng) setForm(f=>({...f,phone_code:ng.code,phone_cca2:ng.cca2})) })
       })
       .catch(()=>{ setLoadingCountries(false); toast.error('Could not load countries') })
   }, [])
 
   const set=(k,v)=>setForm(f=>({...f,[k]:v}))
   const filteredCodes=countries.filter(c=>c.name.toLowerCase().includes(codeSearch.toLowerCase())||c.code.includes(codeSearch)).slice(0,80)
-  const selectedCountry=countries.find(c=>c.code===form.phone_code)
+  const selectedCountry=countries.find(c=>c.cca2===form.phone_cca2)||countries.find(c=>c.code===form.phone_code)
 
   const validateStep1=()=>{
     if(!form.full_name.trim()) return 'Full name is required'
@@ -130,7 +130,7 @@ export default function Register() {
 
           {step===1 && (
             <div style={{ display:'flex',flexDirection:'column',gap:'1rem' }}>
-              <div><label style={lbl}>Full Name</label><input className="ri" style={inp} placeholder="e.g. John Adewale Smith" value={form.full_name} onChange={e=>set('full_name',e.target.value)}/></div>
+              <div><label style={lbl}>Full Name</label><input className="ri" style={inp} placeholder="e.g. John Smith" value={form.full_name} onChange={e=>set('full_name',e.target.value)}/></div>
               <div><label style={lbl}>Email Address</label><input className="ri" style={inp} type="email" placeholder="you@example.com" value={form.email} onChange={e=>set('email',e.target.value)}/></div>
               <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:'.7rem' }}>
                 <div><label style={lbl}>Date of Birth</label><input className="ri" style={{...inp,colorScheme:isDark?'dark':'light'}} type="date" max={new Date(Date.now()-18*365.25*24*60*60*1000).toISOString().split('T')[0]} value={form.dob} onChange={e=>set('dob',e.target.value)}/></div>
@@ -149,14 +149,14 @@ export default function Register() {
                       <div style={{ position:'absolute',top:'calc(100% + 4px)',left:0,background:t.card,border:`1px solid ${t.cardBorder}`,borderRadius:'10px',padding:'.4rem',zIndex:50,maxHeight:'240px',overflowY:'auto',minWidth:'230px',boxShadow:t.shadow }}>
                         <input style={{ width:'100%',padding:'.5rem .7rem',background:t.input,border:`1px solid ${t.inputBorder}`,borderRadius:'6px',color:t.text,fontFamily:'DM Sans',fontSize:'.8rem',outline:'none',marginBottom:'.4rem',boxSizing:'border-box' }} placeholder="Search country..." value={codeSearch} onChange={e=>setCodeSearch(e.target.value)}/>
                         {filteredCodes.map((c,i)=>(
-                          <div key={i} className="code-opt" onClick={()=>{ set('phone_code',c.code); setShowCodePicker(false); setCodeSearch('') }} style={{ display:'flex',alignItems:'center',gap:'.6rem',padding:'.5rem .7rem',borderRadius:'6px',transition:'background .15s' }}>
+                          <div key={i} className="code-opt" onClick={()=>{ setForm(f=>({...f,phone_code:c.code,phone_cca2:c.cca2})); setShowCodePicker(false); setCodeSearch('') }} style={{ display:'flex',alignItems:'center',gap:'.6rem',padding:'.5rem .7rem',borderRadius:'6px',transition:'background .15s' }}>
                             <span>{c.flag}</span><span style={{ color:t.text,fontFamily:'DM Sans',fontSize:'.8rem',flex:1 }}>{c.name}</span><span style={{ color:t.textSub,fontFamily:'DM Sans',fontSize:'.76rem' }}>{c.code}</span>
                           </div>
                         ))}
                       </div>
                     )}
                   </div>
-                  <input className="ri" style={{...inp,flex:1}} type="tel" placeholder="8012345678" value={form.phone} onChange={e=>set('phone',e.target.value.replace(/\D/g,''))}/>
+                  <input className="ri" style={{...inp,flex:1}} type="tel" placeholder="555-123-4567" value={form.phone} onChange={e=>set('phone',e.target.value.replace(/\D/g,''))}/>
                 </div>
               </div>
               <div>
