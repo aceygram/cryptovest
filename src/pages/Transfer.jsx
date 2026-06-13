@@ -37,6 +37,7 @@ export default function Transfer() {
   }
 
   const handlePreview = () => {
+    if (profile?.kyc_status !== 'verified') return toast.error('Complete KYC verification before sending funds')
     if (!recipient) return toast.error('Search for a recipient first')
     const amt = parseFloat(amount)
     if (!amt || amt <= 0) return toast.error('Enter a valid amount')
