@@ -4,7 +4,7 @@ import { supabase } from '../lib/supabase'
 import Navbar from '../components/Navbar'
 import { useTheme, tokens } from '../context/ThemeContext'
 import toast, { Toaster } from 'react-hot-toast'
-import { User, Mail, Phone, Globe, Calendar, Shield, Eye, EyeOff } from 'lucide-react'
+import { User, Mail, Phone, Globe, Calendar, Shield, Eye, EyeOff, Pencil, Check, X } from 'lucide-react'
 
 const SEX_AVATARS = { male:'👨', female:'👩', neutral:'🧑' }
 const REFERRERS = {
@@ -22,13 +22,31 @@ const REFERRERS = {
 }
 
 export default function Profile() {
-  const { profile, user } = useAuth()
+  const { profile, user, fetchProfile } = useAuth()
   const { theme } = useTheme()
   const t = tokens(theme)
   const [mode, setMode] = useState('view')
   const [showPw, setShowPw] = useState({ current:false,new:false,confirm:false })
   const [pw, setPw] = useState({ current:'',new:'',confirm:'' })
   const [loading, setLoading] = useState(false)
+
+  const [editingName, setEditingName] = useState(false)
+  const [newName, setNewName] = useState('')
+  const [savingName, setSavingName] = useState(false)
+
+  const handleSaveName = async () => {
+    if (!newName.trim()) return toast.error('Name cannot be empty')
+    if (newName.trim().length < 2) return toast.error('Name must be at least 2 characters')
+    setSavingName(true)
+    const { error } = await supabase.from('profiles').update({ full_name: newName.trim() }).eq('id', user.id)
+    if (error) { toast.error('Failed to update name'); setSavingName(false); return }
+    // Also update Supabase auth metadata
+    await supabase.auth.updateUser({ data: { full_name: newName.trim() } })
+    await fetchProfile(user.id)
+    toast.success('Name updated!')
+    setEditingName(false)
+    setSavingName(false)
+  }
 
   const setPwF=(k,v)=>setPw(f=>({...f,[k]:v}))
   const toggleShow=(k)=>setShowPw(f=>({...f,[k]:!f[k]}))
@@ -89,7 +107,7 @@ export default function Profile() {
         </div>
 
         <div style={{ display:'flex',gap:'.5rem',marginBottom:'1.2rem' }}>
-          {[['view','👤 My Information'],['password','🔒 Change Password']].map(([tab,label])=>(
+          {[['view','👤 My Information'],['edit','✏️ Edit Profile'],['password','🔒 Change Password']].map(([tab,label])=>(
             <button key={tab} className="pf-tab" onClick={()=>setMode(tab)}
               style={{ padding:'.55rem 1.2rem',borderRadius:'8px',fontFamily:'DM Sans',fontWeight:'600',fontSize:'.82rem',background:mode===tab?'linear-gradient(135deg,#00d4ff22,#00ff8822)':t.card,color:mode===tab?t.cyan:t.textSub,borderTop:mode===tab?`1px solid #00d4ff44`:`1px solid ${t.cardBorder}` }}>
               {label}
@@ -118,6 +136,36 @@ export default function Profile() {
                 </div>
               </div>
             )}
+          </div>
+        )}
+
+        {mode==='edit' && (
+          <div style={{ background:t.card,border:`1px solid ${t.cardBorder}`,borderRadius:'16px',padding:'1.4rem' }}>
+            <h3 style={{ color:t.text,margin:'0 0 .4rem',fontSize:'.92rem',fontWeight:'700' }}>Edit Profile</h3>
+            <p style={{ color:t.textSub,fontFamily:'DM Sans',fontSize:'.82rem',margin:'0 0 1.4rem' }}>Update your display name.</p>
+            <div style={{ display:'flex',flexDirection:'column',gap:'1rem' }}>
+              <div>
+                <label style={lbl}>Full Name</label>
+                <input className="pf"
+                  style={{ width:'100%',padding:'.82rem 1rem',background:t.input,border:`1px solid ${t.inputBorder}`,borderRadius:'8px',color:t.text,fontFamily:'DM Sans',fontSize:'.9rem',outline:'none',boxSizing:'border-box' }}
+                  placeholder={profile?.full_name}
+                  defaultValue={profile?.full_name}
+                  onChange={e=>setNewName(e.target.value)}
+                />
+                <p style={{ color:t.textMuted,fontFamily:'DM Sans',fontSize:'.72rem',margin:'.4rem 0 0' }}>
+                  This name is shown across your dashboard, transactions, and KYC records.
+                </p>
+              </div>
+              <div style={{ background:t.input,padding:'1rem',borderRadius:'8px',borderLeft:`3px solid ${t.yellow}` }}>
+                <p style={{ color:t.textSub,fontFamily:'DM Sans',fontSize:'.82rem',margin:0 }}>
+                  ⚠️ Email, phone, country and date of birth cannot be changed after registration. Contact support if you need help.
+                </p>
+              </div>
+              <button onClick={handleSaveName} disabled={savingName}
+                style={{ width:'100%',padding:'.88rem',background:'linear-gradient(135deg,#00d4ff,#00ff88)',color:'#020817',border:'none',borderRadius:'10px',fontFamily:'Syne',fontWeight:'700',fontSize:'.92rem',cursor:'pointer',opacity:savingName?.7:1,marginTop:'.3rem' }}>
+                {savingName?'Saving...':'Save Name'}
+              </button>
+            </div>
           </div>
         )}
 
