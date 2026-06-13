@@ -5,7 +5,7 @@ import { supabase } from '../lib/supabase'
 import { Link } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import BtcChart from '../components/BtcChart'
-import { TrendingUp, ArrowDownCircle, ArrowUpCircle, DollarSign, Clock } from 'lucide-react'
+import { TrendingUp, ArrowDownCircle, ArrowUpCircle, DollarSign, Clock, Send } from 'lucide-react'
 
 function LiveChart({ t }) {
   const canvasRef = useRef(null)
@@ -188,8 +188,8 @@ export default function Dashboard() {
         </div>
 
         <div className="db-actions" style={{ display:'flex',gap:'.8rem',marginBottom:'1.5rem',flexWrap:'wrap' }}>
-          {[{to:'/deposit',label:'Deposit',icon:<ArrowDownCircle size={15}/>,color:t.cyan},{to:'/withdraw',label:'Withdraw',icon:<ArrowUpCircle size={15}/>,color:t.red},{to:'/plans',label:'Invest Now',icon:<TrendingUp size={15}/>,color:t.green}].map(btn=>(
-            <Link key={btn.to} to={btn.to} style={{ display:'flex',alignItems:'center',gap:'.5rem',padding:'.75rem 1.4rem',background:btn.color+'14',color:btn.color,border:`1px solid ${btn.color}33`,borderRadius:'8px',textDecoration:'none',fontFamily:'DM Sans',fontWeight:'600',fontSize:'.88rem' }}>
+          {[{to:'/deposit',label:'Deposit',icon:<ArrowDownCircle size={15}/>,color:t.cyan},{to:'/withdraw',label:'Withdraw',icon:<ArrowUpCircle size={15}/>,color:t.red},{to:'/plans',label:'Invest Now',icon:<TrendingUp size={15}/>,color:t.green},{to:'/transfer',label:'Send Funds',icon:<Send size={15}/>,color:'#8b5cf6'}].map(btn=>(
+            <Link key={btn.to} to={btn.to} style={{ display:'flex',alignItems:'center',gap:'.5rem',padding:'.75rem 1.4rem',background:btn.color+'14',color:btn.color,border:`1px solid ${btn.color}33`,borderRadius:'8px',textDecoration:'none',fontFamily:'DM Sans',fontWeight:'600',fontSize:'.88rem',whiteSpace:'nowrap' }}>
               {btn.icon} {btn.label}
             </Link>
           ))}
@@ -231,7 +231,7 @@ export default function Dashboard() {
           </div>
           {recentTx.length===0 ? <p style={{ color:t.textMuted,fontFamily:'DM Sans',fontSize:'.85rem',textAlign:'center',padding:'1.5rem 0' }}>No transactions yet.</p>
           : recentTx.map(tx=>{
-            const isDebit=tx.type==='withdrawal'||tx.type==='investment'
+            const isDebit=tx.type==='withdrawal'||tx.type==='investment'||tx.type==='transfer_sent'
             const statusColor=tx.status==='confirmed'?t.green:tx.status==='rejected'?t.red:t.yellow
             return (
               <div key={tx.id} style={{ display:'flex',justifyContent:'space-between',alignItems:'center',padding:'.8rem',background:t.input,borderRadius:'8px',marginBottom:'.4rem',border:`1px solid ${t.cardBorder}` }}>
@@ -240,7 +240,7 @@ export default function Dashboard() {
                     {isDebit?<ArrowUpCircle size={14} color={t.red}/>:<ArrowDownCircle size={14} color={t.cyan}/>}
                   </div>
                   <div>
-                    <p style={{ color:t.text,margin:0,fontFamily:'DM Sans',fontSize:'.82rem',fontWeight:'600',textTransform:'capitalize' }}>{tx.type}</p>
+                    <p style={{ color:t.text,margin:0,fontFamily:'DM Sans',fontSize:'.82rem',fontWeight:'600',textTransform:'capitalize' }}>{tx.type==='transfer_sent'?'Sent':tx.type==='transfer_received'?'Received':tx.type}</p>
                     <p style={{ color:t.textMuted,margin:'.1rem 0 0',fontFamily:'DM Sans',fontSize:'.7rem' }}>{new Date(tx.created_at).toLocaleDateString()}</p>
                   </div>
                 </div>

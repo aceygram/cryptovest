@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext'
 import Navbar from '../components/Navbar'
 import { useTheme, tokens } from '../context/ThemeContext'
 import BtcChart from '../components/BtcChart'
-import { ArrowDownCircle, ArrowUpCircle, TrendingUp, Gift, Clock, CheckCircle, XCircle } from 'lucide-react'
+import { ArrowDownCircle, ArrowUpCircle, TrendingUp, Gift, Clock, CheckCircle, XCircle, Send, Download } from 'lucide-react'
 
 function BalanceChart({ transactions, t }) {
   const canvasRef = useRef(null)
@@ -63,10 +63,12 @@ function TypeBreakdown({ transactions, t }) {
 }
 
 const TYPE_CONFIG = {
-  deposit:    { icon:<ArrowDownCircle size={16}/>, colorKey:'cyan',   label:'Deposit' },
-  withdrawal: { icon:<ArrowUpCircle size={16}/>,   colorKey:'red',    label:'Withdrawal' },
-  investment: { icon:<TrendingUp size={16}/>,      colorKey:'blue',   label:'Investment' },
-  earning:    { icon:<Gift size={16}/>,            colorKey:'green',  label:'Earning' },
+  deposit:          { icon:<ArrowDownCircle size={16}/>, colorKey:'cyan',   label:'Deposit' },
+  withdrawal:       { icon:<ArrowUpCircle size={16}/>,   colorKey:'red',    label:'Withdrawal' },
+  investment:       { icon:<TrendingUp size={16}/>,      colorKey:'blue',   label:'Investment' },
+  earning:          { icon:<Gift size={16}/>,            colorKey:'green',  label:'Earning' },
+  transfer_sent:    { icon:<Send size={16}/>,            colorKey:'purple', label:'Sent' },
+  transfer_received:{ icon:<Download size={16}/>,        colorKey:'purple', label:'Received' },
 }
 
 export default function History() {
@@ -104,7 +106,7 @@ export default function History() {
                 <p style={{ color:t.textSub, fontFamily:'DM Sans', fontSize:'.72rem', margin:'.15rem 0 0' }}>Based on confirmed transactions</p>
               </div>
               <span style={{ color:t.green, fontFamily:'DM Sans', fontWeight:'700', fontSize:'.82rem' }}>
-                ${transactions.filter(tx=>tx.status==='confirmed').reduce((s,tx)=>{ if(tx.type==='deposit'||tx.type==='earning') return s+tx.amount; if(tx.type==='withdrawal') return s-tx.amount; return s },0).toFixed(2)}
+${transactions.filter(tx=>tx.status==='confirmed').reduce((s,tx)=>{ if(tx.type==='deposit'||tx.type==='earning'||tx.type==='transfer_received') return s+tx.amount; if(tx.type==='withdrawal'||tx.type==='transfer_sent') return s-tx.amount; return s },0).toFixed(2)}
               </span>
             </div>
             <div style={{ height:'130px' }}><BalanceChart transactions={transactions} t={t}/></div>
@@ -116,10 +118,10 @@ export default function History() {
         </div>
 
         <div className="hist-tabs" style={{ display:'flex', gap:'.5rem', marginBottom:'1.2rem', flexWrap:'wrap' }}>
-          {['all','deposit','withdrawal','investment','earning'].map(tab=>(
+          {['all','deposit','withdrawal','investment','earning','transfer_sent','transfer_received'].map(tab=>(
             <button key={tab} className="hist-tab" onClick={()=>setFilter(tab)}
               style={{ padding:'.48rem 1.1rem', borderRadius:'99px', border:'none', cursor:'pointer', fontSize:'.8rem', fontFamily:'DM Sans', fontWeight:'600', transition:'all .2s', background:filter===tab?'linear-gradient(135deg,#00d4ff,#00ff88)':t.card, color:filter===tab?'#020817':t.textSub, border:filter===tab?'none':`1px solid ${t.cardBorder}` }}>
-              {tab.charAt(0).toUpperCase()+tab.slice(1)}
+              {tab==='transfer_sent'?'Sent':tab==='transfer_received'?'Received':tab.charAt(0).toUpperCase()+tab.slice(1)}
             </button>
           ))}
         </div>
@@ -129,15 +131,15 @@ export default function History() {
           : filtered.length===0 ? <p style={{ color:t.textMuted, textAlign:'center', padding:'3rem', fontFamily:'DM Sans' }}>No transactions found.</p>
           : filtered.map(tx=>{
             const config=TYPE_CONFIG[tx.type]||TYPE_CONFIG.deposit
-            const color=t[config.colorKey]||t.cyan
-            const isDebit=tx.type==='withdrawal'||tx.type==='investment'
+            const color=config.colorKey==='purple'?'#8b5cf6':t[config.colorKey]||t.cyan
+            const isDebit=tx.type==='withdrawal'||tx.type==='investment'||tx.type==='transfer_sent'
             return (
               <div key={tx.id} style={{ display:'flex', alignItems:'center', gap:'.9rem', padding:'.85rem', borderRadius:'10px', marginBottom:'.4rem', background:t.input, border:`1px solid ${t.cardBorder}` }}>
                 <div style={{ width:'36px', height:'36px', borderRadius:'9px', background:color+'18', border:`1px solid ${color}22`, display:'flex', alignItems:'center', justifyContent:'center', color, flexShrink:0 }}>{config.icon}</div>
                 <div style={{ flex:1, minWidth:0 }}>
                   <p style={{ color:t.text, margin:0, fontFamily:'DM Sans', fontWeight:'600', fontSize:'.85rem' }}>{config.label}</p>
                   <p style={{ color:t.textMuted, margin:'.12rem 0 0', fontFamily:'DM Sans', fontSize:'.72rem', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>
-                    {new Date(tx.created_at).toLocaleString()}{tx.crypto_currency&&` · ${tx.crypto_currency.toUpperCase()}`}
+                    {new Date(tx.created_at).toLocaleString()}{tx.crypto_currency&&` · ${tx.crypto_currency.toUpperCase()}`}{(tx.type==='transfer_sent'||tx.type==='transfer_received')&&tx.crypto_address&&` · ${tx.type==='transfer_sent'?'To':'From'}: ${tx.crypto_address}`}
                   </p>
                 </div>
                 <div style={{ textAlign:'right', flexShrink:0 }}>

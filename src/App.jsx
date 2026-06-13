@@ -20,6 +20,7 @@ import Profile from './pages/Profile'
 import KYC from './pages/KYC'
 import InvestmentHistory from './pages/Investmenthistory'
 import ReferralDashboard from './pages/Referraldashboard'
+import Transfer from './pages/Transfer'
 
 import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminUsers from './pages/admin/AdminUsers'
@@ -53,6 +54,7 @@ export default function App() {
             <Route path="/kyc"                element={<ProtectedRoute><KYC /></ProtectedRoute>} />
             <Route path="/investments"        element={<ProtectedRoute><InvestmentHistory /></ProtectedRoute>} />
             <Route path="/referrals"          element={<ProtectedRoute><ReferralDashboard /></ProtectedRoute>} />
+            <Route path="/transfer"          element={<ProtectedRoute><Transfer /></ProtectedRoute>} />
 
             {/* Admin */}
             <Route path="/admin"                   element={<AdminRoute><AdminDashboard /></AdminRoute>} />
