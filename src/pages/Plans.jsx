@@ -60,7 +60,15 @@ export default function Plans() {
     setActivating(plan.id)
     const roi_amount=(investAmount*plan.roi_percent)/100
     const end_date=new Date(); end_date.setDate(end_date.getDate()+plan.duration_days)
-    const { error:invError }=await supabase.from('investments').insert({ user_id:user.id,plan_id:plan.id,amount:investAmount,roi_amount,status:'active',end_date:end_date.toISOString() })
+    const { error: invError } = await supabase.from('investments').insert({
+  user_id: user.id,
+  plan_id: plan.id,
+  amount: investAmount,
+  roi_amount,                                    // total ROI
+  daily_roi_amount: roi_amount / plan.duration_days,  // add this line
+  status: 'active',
+  end_date: end_date.toISOString()
+})
     if(invError){ toast.error('Failed to activate plan'); setActivating(null); return }
     const { error:profileError }=await supabase.from('profiles').update({ balance:profile.balance-investAmount, total_invested:(profile.total_invested||0)+investAmount }).eq('id',user.id)
     if(profileError){ toast.error('Balance update failed'); setActivating(null); return }
