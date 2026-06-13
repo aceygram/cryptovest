@@ -5,6 +5,7 @@ import { useTheme, tokens } from '../../context/ThemeContext'
 import toast, { Toaster } from 'react-hot-toast'
 import { Gift, Search } from 'lucide-react'
 import { sendEmail, emailTemplates } from '../../lib/email'
+import { useAuth } from '../../context/AuthContext'
 
 const SEX_AVATARS = { male:'👨', female:'👩', neutral:'🧑' }
 
@@ -28,6 +29,37 @@ export default function AdminUsers() {
     const { data } = await supabase.from('profiles').select('*').order('created_at',{ascending:false})
     setUsers(data||[]); setFiltered(data||[]); setLoading(false)
   }
+
+  const { user: adminUser } = useAuth()
+const [impersonating, setImpersonating] = useState(null)
+
+const handleImpersonate = async (targetUser) => {
+  if (!window.confirm(`Login as ${targetUser.full_name}? This will be logged.`)) return
+  setImpersonating(targetUser.id)
+  try {
+    const session = await supabase.auth.getSession()
+    const token = session.data.session.access_token
+
+    const res = await fetch('/api/admin-impersonate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ target_user_id: targetUser.id })
+    })
+    const data = await res.json()
+    if (data.link) {
+      // Open in new tab so you don't lose your admin session
+      window.open(data.link, '_blank')
+    } else {
+      toast.error('Failed to generate session')
+    }
+  } catch (err) {
+    toast.error('Error: ' + err.message)
+  }
+  setImpersonating(null)
+}
 
   const handleCreditEarning = async (user) => {
     const amount = parseFloat(creditForm[user.id])
@@ -111,6 +143,14 @@ export default function AdminUsers() {
                   <Gift size={14}/>{crediting===user.id?'...':'Credit'}
                 </button>
               </div>
+
+            <button
+  style={{ display:'flex', alignItems:'center', gap:'.4rem', padding:'.6rem 1rem', background:t.blue+'18', color:t.blue, border:`1px solid ${t.blue}33`, borderRadius:'8px', cursor:'pointer', fontSize:'.82rem', fontWeight:'600', fontFamily:'DM Sans', opacity:impersonating===user.id?.6:1 }}
+  onClick={() => handleImpersonate(user)}
+  disabled={impersonating === user.id}
+>
+  👁 View as User
+</button>
             </div>
           ))
         )}
